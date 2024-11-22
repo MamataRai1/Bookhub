@@ -1,3 +1,33 @@
+<?php
+ $conn = new mysqli('localhost', 'root', '', 'bookhub');
+
+ // Check connection
+ if ($conn->connect_error) {
+     die("Connection failed: " . $conn->connect_error);
+ }
+ 
+if ($_SERVER['REQUEST_METHOD'] == "POST") 
+{
+    $gmail = $_POST['mail'];  
+    $password = $_POST['pass']; 
+
+    if (!empty($gmail) && !empty($password) && !is_numeric($gmail)) 
+    {
+      
+        $query = "select*from form where email = '$gmail' limit 1";
+ 
+
+        
+        echo "<script type='text/javascript'>alert('wrong username or password');</script>";
+         
+    } 
+    else{
+        echo "<script type='text/javascript'>alert('wrong username or password');</script>";
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +40,7 @@
     <div class="login">
         <h1>Login</h1>
 
-        <form>
+        <form method="POST">
              <label>Email</label>
             <input type="email" name="mail" required>
             <label>password</label>

@@ -1,23 +1,44 @@
-
 <?php
-  session_start();
+ $conn = new mysqli('localhost', 'root', '', 'bookhub');
 
-  if($_SERVER['REQUEST_METHOD'] == "POST")
-  {
-    $firstname = $_POST['fname'];
-    $lastname = $_POST['lname'];
-    $num = $_POST['number'];
-    $address = $_POST['add'];
-    $gmail = $_POST['mail'];
-    $password = $_POST['pass'];
+ // Check connection
+ if ($conn->connect_error) {
+     die("Connection failed: " . $conn->connect_error);
+ }
+ 
+if ($_SERVER['REQUEST_METHOD'] == "POST") 
+{
+    $firstname = $_POST['fname']; // First Name
+    $lastname = $_POST['lname']; // Last Name
+    $num = $_POST['number']; // Contact Number
+    $address = $_POST['add']; // Address
+    $gmail = $_POST['mail']; // Email
+    $password = $_POST['pass']; // Password
 
-    if(!empty($gmail)&& !is_numeric($gmail))
+    // Validate email and ensure it is not numeric
+    if (!empty($gmail) && !is_numeric($gmail)) 
     {
-        $query = "insert into form (fname,lname	,c-no,address,email,password) values ('$firstname','$lastname','$num','$address','$gmail','$password')	";
-    }
+        
+        $query="insert into form (fname, lname, c_no, address, email, password) VALUES ('$firstname', '$lastname', '$num', '$address', '$gmail', ' $password')";
 
-  }
+        
+         
+         
+       
+        echo "<script type='text/javascript'>alert('Successfully registered');</script>";
+         
+        
+
+        
+    } 
+  else
+   {
+        echo "<script type='text/javascript'>alert('Please enter valid information');</script>";
+    }
+}
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -36,7 +57,7 @@
             <input type="text" name="fname" required>
             <label>Last Name</label>
             <input type="text" name="lname" required>
-            <label>contact Address</label>
+            <label>contact number</label>
             <input type="tel" name="number" required>
             <label>Address</label>
             <input type="text" name="add" required>
