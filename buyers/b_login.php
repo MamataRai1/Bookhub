@@ -11,6 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
     $gmail = $_POST['mail'];  
     $password = $_POST['pass']; 
 
+    session_start();
+    $_SESSION['b_loginid'] = $username;
+    header("Location: b_dashboard.php");
+    exit;
+
     if (!empty($gmail) && !empty($password) && !is_numeric($gmail)) 
     {
       
@@ -47,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
             <input type="password" name="pass" required>
             <input type="submit" name="" valud="submit">
         </form>
-        <p>Dont have an account? <a href="s_signup.php">Sign Up here</a> </p>
+        <p>Dont have an account? <a href="b_singup.php">Sign Up here</a> </p>
     </div>
 
 </body>

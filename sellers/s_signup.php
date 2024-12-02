@@ -17,12 +17,17 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $password = $_POST['pass'];
     $shop_name = $_POST['shop_name'];
     $product_list = $_POST['product_list'];
+
+    session_start();
+    $_SESSION['s_loginid'] = $username;
+    header("Location: s_dashboard.php");
+    exit;
     
     // Prepare the query
     $query = "INSERT INTO form (fname, lname, c_no, address, email, password, shop_name, product_list, sales_count, rating, created_at, updated_at) 
               VALUES ('$firstname', '$lastname', '$num', '$address', '$gmail', '$password', '$shop_name', '$product_list', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
 
-    // Execute the query
+     
     if ($conn->query($query) === TRUE) {
         echo "<script>alert('Successfully registered');</script>";
     } else {

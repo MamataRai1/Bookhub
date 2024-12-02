@@ -19,6 +19,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $ratings = json_encode([]); // Empty JSON for ratings
     $review_history = ""; // Initialize view_history as empty
 
+    session_start();
+    $_SESSION['b_loginid'] = $username;
+    header("Location: b_dashboard.php");
+    exit;
+
     // Prepare the query
     $query = "INSERT INTO buyers (fname, lname, phone, address, email, password, wishlist, review_history, ratings, created_at, updated_at) 
               VALUES ('$firstname', '$lastname', '$phone', '$address', '$email', '$password', '$wishlist', '$review_history', 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
@@ -66,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             <input type="submit" value="Submit">
         </form>
         <p>By creating and using Your account, you agree to our <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>.</p>
-        <p>Already have an account? <a href="s_login.php">Login Here</a></p>
+        <p>Already have an account? <a href="b_login.php">Login Here</a></p>
     </div>
 </body>
 

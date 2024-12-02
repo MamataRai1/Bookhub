@@ -11,6 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] == "POST")
     $gmail = $_POST['mail'];  
     $password = $_POST['pass']; 
 
+    session_start();
+    $_SESSION['s_loginid'] = $username;
+    header("Location: s_dashboard.php");
+    exit;
+
     if (!empty($gmail) && !empty($password) && !is_numeric($gmail)) 
     {
       
