@@ -1,0 +1,353 @@
+*{
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    list-style: none;
+    font-family: "Arial";
+}
+
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    height: 70px;
+    background-color: #000080;
+    
+}
+
+.navbar h2{
+    color: rgb(248, 247, 244);
+    font-size: 35px;
+    padding: 0px 20px;
+}
+
+.menubar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 80px;
+}
+
+.menubar li{
+    display: inline-block;
+}
+.menubar :hover{
+    color:rgb(99, 253, 194);
+}
+
+.menubar li a{
+    color: aliceblue;
+    margin-right: 20px;
+    padding: 0px 10px;
+    font-size: 20px;
+    font-weight: 500;
+}
+button{
+    font-size: 1.2rem;
+    border: none;
+    outline: none;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background-color: rgb(246, 45, 78);
+    color: white;
+}
+.icons{
+    padding: 0 12px;
+}
+.icons a{
+    margin: 5px;
+}
+
+.fa-magnifying-glass{
+    color: white;
+}
+.fa-heart{
+    color: rgb(252, 247, 247);
+}
+.fa-cart-shopping{
+    color: white;
+}
+ 
+/* hero section */
+section{
+    padding:0px 30px;
+} 
+.home{
+    display: flex;
+    align-items: center;
+    min-height: 90vh;
+    /* background:url(./assets/img/) no-repeat;
+    background-position: right;  */
+}
+.heading{
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+ /* Best Selling Items */
+ .best-selling {
+    padding: 40px 0;
+    background-color: #f4f4f4;
+}
+
+.best-selling h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 30px;
+}
+
+.item-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-gap: 20px;
+}
+
+.item-card {
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    transition: 1s;
+}
+
+.item-card:hover{
+    transform: scale(1.1);
+    z-index: 2;
+}
+
+.item-card img {
+    max-width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+.item-card h3 {
+    margin-top: 10px;
+    font-size: 18px;
+}
+
+.item-card p {
+    margin-top: 5px;
+    color: black;
+}
+
+.item-card .icons {
+    margin-top: 10px;
+}
+
+.item-card .icons a, .item-card .icons button {
+    color: #302e2e;
+    background-color: transparent;
+    border: none;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.item-card .icons a:hover, .item-card .icons button:hover {
+    color: #fc5050;
+}
+
+b{
+    text-decoration: line-through;
+    color: grey;
+}
+
+/* duration */
+.container{
+    background: pink;
+
+}
+.discount-banner {
+    color: #0c0000;
+    padding: 0 100px;
+    text-align: right;
+    border-radius: 3px;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+}
+
+.discount-banner h2 {
+    font-size: 60px;
+    margin-bottom: 20px;
+}
+
+.countdown {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 30px;
+    text-align: right;
+    padding: 0 10px;
+}
+
+.countdown-item {
+    margin: 0 10px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.countdown-item p {
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+.shop-btn {
+    display: inline-block;
+    background-color: rgb(246 45 78);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 90px;
+    text-decoration: none;
+    font-weight: bold;
+    margin-bottom: 30px;
+
+}
+
+.shop-btn:hover {
+    color: #7ff7b5;
+}
+
+/* contact */
+.contact-form {
+    background: #ffffff;
+    padding: 20px 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(15, 1, 1, 0.1);
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 20px;
+  }
+  .contact-form h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #070201;
+    text-align: center;
+  }
+  .contact-form .form-group {
+    margin-bottom: 15px;
+  }
+  .contact-form label {
+    display: block;
+    font-size: 14px;
+    color: #070404;
+    margin-bottom: 5px;
+  }
+  .contact-form input,
+  .contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    }
+    .contact-form textarea {
+      resize: none;
+      height: 100px;
+    }
+    .contact-form button {
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background-color: rgb(246, 45, 78);
+      border: none;
+      border-radius: 90px;
+      cursor: pointer;
+    }
+    .contact-form button:hover {
+      color: #7ff7b5;
+    }
+  
+/* Plans */
+.plan{
+    width: 100%;
+    min-height: 100vh;
+    background: #5c539d;
+}
+
+.plan h2{
+    color: #fff;
+    font-size: 32px;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.price-row{
+    width: 90%;
+    max-width: 1100px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 25px;
+}
+
+.price-col{
+    background: #1f283b;
+    padding: 10% 15%;
+    border-radius: 10px;
+    color: #fff;
+    text-align: center;
+}
+
+.price-col p{
+    font-size: 22px;
+}
+
+.price-col h3{
+    font-size: 44px;
+    margin: 20px 0 40px;
+    font-weight: 500;
+}
+
+.price-col h3 span{
+    font-size: 16px;
+}
+
+.price-col ul{
+    text-align: left;
+    margin: 20px 0;
+    color: #ddd;
+}
+
+.price-col ul li{
+    margin: 15px 0;
+}
+
+.price-col ul li::before{
+    content: '\2022';
+    color: #e33059;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.price-col button{
+    width: 100%;
+    padding: 14px 0;
+    background: transparent;
+    color: #fff;
+    font-size: 15px;
+    border: 1px solid #e33058;
+    border-radius: 6px;
+    margin-top: 30px;
+    cursor: pointer;
+    transition: background 0.5s;  
+    /* change the color of add to cart */
+}
+
+.price-col button:hover{
+    background: #e33058;
+}
+/*Footer*/
+.footer_main{
+    padding: 50px 20px;
+    background: #fce3e3;
+    display: flex;
+    gap: 220px;
+    justify-content: center;
+    align-items: center;
+}  
