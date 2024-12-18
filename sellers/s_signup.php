@@ -15,23 +15,25 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $address = $_POST['add'];
     $gmail = $_POST['mail'];
     $password = $_POST['pass'];
-    $shop_name = $_POST['shop_name'];
-    $product_list = $_POST['product_list'];
+    $confirm_password = $_POST['confirm_pass'];
+    $pan_no = $_POST['pan_no'];
 
-    session_start();
-    $_SESSION['s_loginid'] = $username;
-    header("Location: s_dashboard.php");
-    exit;
-    
-    // Prepare the query
-    $query = "INSERT INTO form (fname, lname, c_no, address, email, password, shop_name, product_list, sales_count, rating, created_at, updated_at) 
-              VALUES ('$firstname', '$lastname', '$num', '$address', '$gmail', '$password', '$shop_name', '$product_list', 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
-
-     
-    if ($conn->query($query) === TRUE) {
-        echo "<script>alert('Successfully registered');</script>";
+    // Check if passwords match
+    if ($password !== $confirm_password) {
+        echo "<script>alert('Passwords do not match!');</script>";
     } else {
-        echo "<script>alert('Error: " . $conn->error . "');</script>";
+        // Hash the password for security
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        // Insert into database
+        $query = "INSERT INTO form (fname, lname, c_no, address, email, password, pan_no, status, created_at, updated_at) 
+                  VALUES ('$firstname', '$lastname', '$num', '$address', '$gmail', '$hashed_password', '$pan_no', 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+
+        if ($conn->query($query) === TRUE) {
+            echo "<script>alert('Registration successful! Wait for admin approval.');</script>";
+        } else {
+            echo "<script>alert('Error: " . $conn->error . "');</script>";
+        }
     }
 }
 ?>
@@ -48,12 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
 <body>
     <div class="signup">
-        <h1>Sign Up</h1>
+        <h1> Seller Registration</h1>
         <form method="POST">
             <label>First Name</label>
-            <input type="text" name="fname" required>
+            <input type="text" name="fname" placeholder="Enter Your First Name" required>
             <label>Last Name</label>
-            <input type="text" name="lname" required>
+            <input type="text" name="lname" placeholder="Enter Your Last Name" required>
             <label>Contact Number</label>
             <input type="tel" name="number" required>
             <label>Address</label>
@@ -62,14 +64,14 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             <input type="email" name="mail" required>
             <label>Password</label>
             <input type="password" name="pass" required>
-            <label for="shop_name">Shop Name:</label>
-            <input type="text" id="shop_name" name="shop_name" required>
-            <label for="product_list">Product List:</label>
-            <input type="text" id="product_list" name="product_list" placeholder="List products separated by commas">
+            <label>Confirm Password</label>
+            <input type="password" name="confirm_pass" required>
+            <label>PAN Number of Shop</label>
+            <input type="text" name="pan_no" required>
 
             <input type="submit" value="Submit">
         </form>
-        <p>By creating and using Your account, you agree to our <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>.</p>
+        <p>By creating and using your account, you agree to our <a href="#">Terms and Conditions</a> and <a href="#">Privacy Policy</a>.</p>
         <p>Already have an account? <a href="s_login.php">Login Here</a></p>
     </div>
 </body>
