@@ -30,8 +30,8 @@ if (isset($_POST['action']) && isset($_POST['seller_id'])) {
         $update_stmt->bind_param("si", $status, $seller_id);
         $update_stmt->execute();
 
-        // Redirect
-        header("Location: /bookhub/sellers/seller_dashboard.php");
+        // // Redirect
+        // header("Location: /bookhub/sellers/s_dashboard.php");
         exit();
 
     } elseif ($action === 'reject') {
@@ -42,7 +42,7 @@ if (isset($_POST['action']) && isset($_POST['seller_id'])) {
         $update_stmt->bind_param("si", $status, $seller_id);
         $update_stmt->execute();
 
-        header("Location: /bookhub/sellers/s_dashboard.php");
+        header("Location: /bookhub/sellers/s_signup.php");
         exit();
     }
 }
@@ -59,7 +59,7 @@ if (isset($_POST['delete_seller']) && isset($_POST['seller_id'])) {
 
     if ($stmt->execute()) {
         $_SESSION['success_msg'] = "Seller deleted successfully!";
-        header("Location: http://localhost/bookhub/sellers/s_dashboard.php");
+        // header("Location: http://localhost/bookhub/sellers/s_signup.php");
         exit();
     } else {
         echo "Error: " . $conn->error;
