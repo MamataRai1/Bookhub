@@ -1,4 +1,6 @@
 <?php
+session_start(); // Ensure session is started at the top
+
 // Database connection
 $conn = new mysqli("localhost", "root", "", "bookhub");
 
@@ -7,58 +9,75 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Handle user actions
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Add a new user
-    if (isset($_POST['add_user'])) {
-        $name = $_POST['name'];
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $role = $_POST['role'];
-        $status = "pending"; // Default status is pending for admin approval
+// Approve or Reject Seller Applications
+if (isset($_POST['action']) && isset($_POST['seller_id'])) {
+    $seller_id = intval($_POST['seller_id']); // Sanitize input
+    $action = $_POST['action'];
 
-        $sql = "INSERT INTO users (name, email, password, role, status) VALUES ('$name', '$email', '$password', '$role', '$status')";
-        if ($conn->query($sql)) {
-            echo "User added successfully!";
-        } else {
-            echo "Error: " . $conn->error;
-        }
-    }
+    if ($action === 'approve') {
+        $status = 'approved';
+        $_SESSION['success_msg'] = "Seller approved successfully! Redirecting to seller dashboard...";
 
-    // Approve user
-    if (isset($_POST['approve_user'])) {
-        $user_id = $_POST['users_id'];
-        $query = "UPDATE users SET status = 'approved' WHERE users_id = '$user_id'";
-        if ($conn->query($query)) {
-            echo "User approved successfully!";
-        } else {
-            echo "Error: " . $conn->error;
-        }
-    }
+        // Fetch seller email (optional)
+        $stmt = $conn->prepare("SELECT email FROM form WHERE id = ?");
+        $stmt->bind_param("i", $seller_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $seller = $result->fetch_assoc();
 
-    // Delete user
-    if (isset($_POST['delete_user'])) {
-        $user_id = $_POST['users_id'];
-        $conn->query("DELETE FROM users WHERE users_id = $user_id");
-        $conn->query("DELETE FROM buyers WHERE user_id = $user_id");
-        $conn->query("DELETE FROM sellers WHERE user_id = $user_id");
-        echo "User deleted successfully!";
+        // Update status
+        $update_stmt = $conn->prepare("UPDATE form SET status = ? WHERE id = ?");
+        $update_stmt->bind_param("si", $status, $seller_id);
+        $update_stmt->execute();
+
+        // Redirect
+        header("Location: /bookhub/sellers/seller_dashboard.php");
+        exit();
+
+    } elseif ($action === 'reject') {
+        $status = 'rejected';
+        $_SESSION['error_msg'] = "Seller rejected! Please try again later.";
+
+        $update_stmt = $conn->prepare("UPDATE form SET status = ? WHERE id = ?");
+        $update_stmt->bind_param("si", $status, $seller_id);
+        $update_stmt->execute();
+
+        header("Location: /bookhub/sellers/s_dashboard.php");
+        exit();
     }
 }
 
-// Fetch users for listing
-$result = $conn->query("SELECT * FROM users");
+ 
+
+
+// Delete Seller
+if (isset($_POST['delete_seller']) && isset($_POST['seller_id'])) {
+    $seller_id = intval($_POST['seller_id']);
+
+    $stmt = $conn->prepare("DELETE FROM form WHERE id = ?");
+    $stmt->bind_param("i", $seller_id);
+
+    if ($stmt->execute()) {
+        $_SESSION['success_msg'] = "Seller deleted successfully!";
+        header("Location: http://localhost/bookhub/sellers/s_dashboard.php");
+        exit();
+    } else {
+        echo "Error: " . $conn->error;
+    }
+}
+
+// Fetch sellers list (pending and approved)
+$result = $conn->query("SELECT id, CONCAT(fname, ' ', lname) AS name, email, status FROM form");
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Manage Users</title>
+    <title>Manage Sellers</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            padding: 0;
             background-color: #f9f9f9;
         }
         h1 {
@@ -76,19 +95,12 @@ $result = $conn->query("SELECT * FROM users");
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
-        form {
-            margin-bottom: 20px;
-        }
-        input, select, button {
-            margin: 10px 5px 10px 0;
-            padding: 10px;
-            font-size: 14px;
-        }
         button {
             background-color: #FF4500;
             color: white;
             border: none;
             border-radius: 4px;
+            padding: 10px;
             cursor: pointer;
         }
         button:hover {
@@ -113,50 +125,53 @@ $result = $conn->query("SELECT * FROM users");
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
     </style>
 </head>
 <body>
-    <h1>Manage Users</h1>
+    <h1>Manage Sellers</h1>
     <div class="container">
-        <form method="POST">
-            <h3>Add User</h3>
-            <input type="text" name="name" placeholder="Name" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <select name="role" required>
-                <option value="buyer">Buyer</option>
-                <option value="seller">Seller</option>
-            </select>
-            <button type="submit" name="add_user">Add User</button>
-        </form>
-
-        <h3>Users List</h3>
+        <h3>Sellers List</h3>
+        <?php
+        // Display messages
+        if (isset($_SESSION['success_msg'])) {
+            echo "<p class='success'>{$_SESSION['success_msg']}</p>";
+            unset($_SESSION['success_msg']);
+        } elseif (isset($_SESSION['error_msg'])) {
+            echo "<p class='error'>{$_SESSION['error_msg']}</p>";
+            unset($_SESSION['error_msg']);
+        }
+        ?>
         <table>
             <tr>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Role</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
             <?php while ($row = $result->fetch_assoc()) : ?>
                 <tr>
-                    <td><?= $row['users_id'] ?></td>
-                    <td><?= $row['name'] ?></td>
-                    <td><?= $row['email'] ?></td>
-                    <td><?= $row['role'] ?></td>
-                    <td><?= $row['status'] ?></td>
+                    <td><?= htmlspecialchars($row['id']) ?></td>
+                    <td><?= htmlspecialchars($row['name']) ?></td>
+                    <td><?= htmlspecialchars($row['email']) ?></td>
+                    <td><?= ucfirst(htmlspecialchars($row['status'])) ?></td>
                     <td>
                         <?php if ($row['status'] === 'pending') : ?>
                             <form method="POST" style="display:inline;">
-                                <input type="hidden" name="users_id" value="<?= $row['users_id'] ?>">
-                                <button type="submit" name="approve_user">Approve</button>
+                                <input type="hidden" name="seller_id" value="<?= $row['id'] ?>">
+                                <button type="submit" name="action" value="approve">Approve</button>
+                                <button type="submit" name="action" value="reject">Reject</button>
                             </form>
                         <?php endif; ?>
                         <form method="POST" style="display:inline;">
-                            <input type="hidden" name="users_id" value="<?= $row['users_id'] ?>">
-                            <button type="submit" name="delete_user">Delete</button>
+                            <input type="hidden" name="seller_id" value="<?= $row['id'] ?>">
+                            <button type="submit" name="delete_seller">Delete</button>
                         </form>
                     </td>
                 </tr>

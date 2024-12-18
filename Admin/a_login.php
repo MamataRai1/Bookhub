@@ -1,4 +1,5 @@
 <?php
+
 // Connect to the database
 $conn = new mysqli('localhost', 'root', '', 'bookhub');
 
