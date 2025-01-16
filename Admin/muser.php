@@ -31,7 +31,7 @@ if (isset($_POST['action']) && isset($_POST['seller_id'])) {
         $update_stmt->execute();
 
         // // Redirect
-        // header("Location: /bookhub/sellers/s_dashboard.php");
+        header("Location: /bookhub/index.php");
         exit();
 
     } elseif ($action === 'reject') {
@@ -42,7 +42,7 @@ if (isset($_POST['action']) && isset($_POST['seller_id'])) {
         $update_stmt->bind_param("si", $status, $seller_id);
         $update_stmt->execute();
 
-        header("Location: /bookhub/sellers/s_signup.php");
+        // header("Location: /bookhub/sellers/s_signup.php");
         exit();
     }
 }

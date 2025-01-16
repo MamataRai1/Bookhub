@@ -30,7 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                   VALUES ('$firstname', '$lastname', '$num', '$address', '$gmail', '$hashed_password', '$pan_no', 'pending', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
 
         if ($conn->query($query) === TRUE) {
-            echo "<script>alert('Registration successful! Wait for admin approval.');</script>";
+            echo "<script>alert('Registration successful! Wait for admin approval.');
+            
+             window.location.href = '/bookhub/index.php';
+            </script>";
+           //header("Location: /bookhub/index.php"); // Replace 'landing_page.php' with the actual landing page URL
+            exit();
         } else {
             echo "<script>alert('Error: " . $conn->error . "');</script>";
         }

@@ -4,6 +4,14 @@ $conn = new mysqli('localhost', 'root', '', 'bookhub');
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+ 
+ 
+if ($_SESSION['role'] !== 'seller') {
+    header("Location: index.php");
+    exit;
+}
+echo "Welcome, " . $_SESSION['name'] . " (Seller)";
+ 
 
 // Check if the seller is logged in
 if (!isset($_SESSION['seller_id'])) {

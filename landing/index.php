@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bookstore</title>
     <link rel="stylesheet" href="styles.css">
+     <!-- <link rel="stylesheet" href="styles.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <body>
-    <header>
+    <header class="header">
         <nav class="navbar">
             <div class="logo">
                 <h2>Bookhub</h2>
@@ -16,15 +17,16 @@
                 <ul>
                     <li><a href="index.html">Home</a></li>
                     <li><a href="category">Categories</a></li>
-                    <li><a href="seller.html">Be a seller</a></li>
-                    <li><a href="contactus.html">Contact us</a></li>
+                    <li><a href="/BOOKHUB/sellers/s_signup.php">Be a seller</a></li>
+                    <li><a href="#contact_section">Contact us</a></li>
                 </ul>
             </div>
             <div class="icons">
                 <a href="#" class="fas fa-magnifying-glass"></a>
                 <a href="#" class="fas fa-heart"></a>
                 <a href="#" class="fas fa-cart-shopping"></a>
-                <button><i class="fa-solid fa-user"></i> Login</button>
+                <button><i class="fa-solid fa-user"></i> <a href = "/BOOKHUB/buyers/b_login.php">LOG IN</button>
+                <button>  <a href = "/BOOKHUB/buyers/b_singup.php">SIGN UP</button>
             </div>
         </nav>
     </header>
@@ -47,7 +49,7 @@
         <h2>Best Selling Items</h2>
         <div class="item-grid">
             <div class="item-card">
-                <img src="./assets/img/book2.jpg" alt="">
+             <a href="page.html" >  <img src="./assets/img/book2.jpg" alt=""></a>
                 <h3>Power</h3>
                 <p>by Robert</p>
                 <p class="price"><b>Rs.400</b> <span>Rs.350</span></p>
@@ -166,6 +168,7 @@
     <br>
 
     <!-- Contact -->
+     <section id="contact_section">
     <div class="contact-form">
         <h2>Contact Us</h2>
         <form action="#" method="post">
@@ -184,6 +187,7 @@
             <button type="submit">Send Message</button>
         </form>
     </div>
+    </section>
     
 
 <!-- premium -->
@@ -260,23 +264,7 @@
     </footer>
 
     <script>
-        // Add event listeners for icon hover effects
-        //const icons = document.querySelectorAll('.item-card .icons a, .item-card .icons button, .footer_tag i');
-        //icons.forEach(icon => {
-           // icon.addEventListener('mouseover', () => {
-                //icon.style.color = '#666';
-            //});
-            //icon.addEventListener('mouseout', () => {
-                //icon.style.color = '#333';
-          //  });
-       // });
-
-
-// Countdown Target Date
-const countdownDate = new Date("2024-12-31T00:00:00").getTime();
-
-// Update Countdown Every Second
-const timer = setInterval(() => {
+       const timer = setInterval(() => {
     const now = new Date().getTime();
     const timeLeft = countdownDate - now;
 
@@ -289,16 +277,15 @@ const timer = setInterval(() => {
         const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-        // Update HTML Elements
-        document.getElementById("days").textContent = days.toString().padStart(2, '0');
-        document.getElementById("hours").textContent = hours.toString().padStart(2, '0');
-        document.getElementById("minutes").textContent = minutes.toString().padStart(2, '0');
-        document.getElementById("seconds").textContent = seconds.toString().padStart(2, '0');
+        document.getElementById("days").innerText = days;
+        document.getElementById("hours").innerText = hours;
+        document.getElementById("minutes").innerText = minutes;
+        document.getElementById("seconds").innerText = seconds;
     } else {
         clearInterval(timer);
-        document.querySelector(".countdown").innerHTML = "<h2>Time's up!</h2>";
     }
 }, 1000);
+
 
     </script>
 </body>
