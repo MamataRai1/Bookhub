@@ -34,6 +34,7 @@
     <!-- home section -->
     <section class="home" id="home">
         <div class="content">
+            <a> <img scr = "../assets/img/book0.jpg" alt=""> </a>
             <h3>Buy your favourite book from here</h3>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit odio praesentium <br>
                 ipsa quisquam minima tempore! Soluta rem incidunt quam quo doloribus mollitia dicta,<br>
@@ -49,7 +50,7 @@
         <h2>Best Selling Items</h2>
         <div class="item-grid">
             <div class="item-card">
-             <a href="page.html" >  <img src="./assets/img/book2.jpg" alt=""></a>
+             <a href="page.html" >  <img src="../assets/img/book1.jpg" alt=""></a>
                 <h3>Power</h3>
                 <p>by Robert</p>
                 <p class="price"><b>Rs.400</b> <span>Rs.350</span></p>
@@ -60,7 +61,7 @@
                 </div>
             </div>
             <div class="item-card">
-                <img src="./assets/img/book2.jpg" alt="">
+                <img src="../assets/img/book2.jpg" alt="">
                 <h3>Thorns and Roses</h3>
                 <p>by Sarah</p>
                 <p class="price"><b>Rs.600</b> <span>Rs.500</span></p>
@@ -71,7 +72,7 @@
                 </div>
             </div>
             <div class="item-card">
-                <img src="./assets/img/book3.jpg" alt="">
+                <img src="../assets/img/book3.jpg" alt="">
                 <h3>Broken pieces</h3>
                 <p>by Tillie</p>
                 <p class="price"><b>Rs.1000</b> <span>Rs.800</span></p>
@@ -82,7 +83,7 @@
                 </div>
             </div>
             <div class="item-card">
-                <img src="./assets/img/book4.jpg" alt="">
+                <img src="../assets/img/book4.jpg" alt="">
                 <h3>Games</h3>
                 <p>by Ana</p>
                 <p class="price"><b>Rs.800</b> <span>Rs.750</span></p>
@@ -93,7 +94,7 @@
                 </div>
             </div> 
             <div class="item-card">
-                <img src="./assets/img/book5.jpg" alt="">
+                <img src="../assets/img/book5.jpg" alt="">
                 <h3>Atomic habits</h3>
                 <p>by James</p>
                 <p class="price"><b>Rs.600</b> <span>Rs.500</span></p>
@@ -104,7 +105,7 @@
                 </div>
             </div>
             <div class="item-card">
-                <img src="./assets/img/book6.jpg" alt="">
+                <img src="../assets/img/book6.jpg" alt="">
                 <h3>Haunting adeline</h3>
                 <p>by Colleen</p>
                 <p class="price"><b>Rs.500</b> <span>Rs.350</span></p>
@@ -115,7 +116,7 @@
                 </div>
             </div>
             <div class="item-card">
-                <img src="./assets/img/book7.jpg" alt="">
+                <img src="../assets/img/book7.jpg" alt="">
                 <h3>It ends with us</h3>
                 <p>by Colleen</p>
                 <p class="price"><b>Rs.1100</b> <span>Rs.1000</span></p>
@@ -126,7 +127,7 @@
                 </div>
             </div>
             <div class="item-card">
-                <img src="./assets/img/book8.jpg" alt="">
+                <img src="../assets/img/book8.jpg" alt="">
                 <h3>It start with us</h3>
                 <p>by Colleen</p>
                 <p class="price"><b>Rs.800</b> <span>Rs.550</span></p>
@@ -142,7 +143,7 @@
     <!-- discount -->
     <div class="container">
         <div class="discount-banner">
-            <img src="./assets/img/book10.png" width="500px" height="500px" alt="">
+            <img src="../assets/img/book10.png" width="500px" height="500px" alt="">
             <h2>30% Discount<br>On All Items.<br>Hurry Up !!!</h2>
             <div class="countdown">
                 <div class="countdown-item">
@@ -190,51 +191,7 @@
     </section>
     
 
-<!-- premium -->
-<div class="plan">
-    <h2>Choose your plan</h2>
-    <div class="price-row">
-        <div class="price-col">
-            <p>Starter</p>
-            <h3>19$ / month</h3>
-            <ul>
-                <li>1 Website</li>
-                <li>1 Website</li>
-                <li>1 Website</li>
-                <li>1 Website</li>
-                <li>1 Website</li>
-                <li>1 Website</li>
-            </ul>
-            <button>Add To Cart</button>
-        </div>
-        <div class="price-col">
-            <p>Advanced</p>
-            <h3>19$ / month</h3>
-            <ul>
-                <li>1 Website</li>
-                <li>1 Website</li>
-                <li>1 Website</li>
-                <li>1 Website</li>
-                <li>1 Website</li>
-                <li>1 Website</li>
-            </ul>
-            <button>Add To Cart</button>
-        </div>
-        <div class="price-col">
-            <p>Premium</p>
-            <h3>19$ / month</h3>
-            <ul>
-                <li>1 Website</li>
-                <li>1 Website</li>
-                <li>1 Website</li>
-                <li>1 Website</li>
-                <li>1 Website</li>
-                <li>1 Website</li>
-            </ul>
-            <button>Add To Cart</button>
-        </div>
-    </div>
-</div>
+ 
 
     <!-- footer -->
     <footer>
