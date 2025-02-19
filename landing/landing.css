@@ -23,6 +23,10 @@
     padding: 0px 20px;
 }
 
+.home .content img{
+     display: flex;
+     
+}
 .menubar{
     display: flex;
     justify-content: space-between;
@@ -159,110 +163,108 @@ b{
 }
 
 /* duration */
-.container{
-    background: pink;
-
-}
 .discount-banner {
-    color: #0c0000;
-    padding: 0 100px;
-    text-align: right;
-    border-radius: 3px;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: palevioletred;
+    color: white;
+    padding: 40px 20px
+    
+}
+
+.discount-banner img {
+    width: 500px;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 8px;
 }
 
 .discount-banner h2 {
-    font-size: 60px;
+    font-size: 40px;
+    font-weight: bold;
     margin-bottom: 20px;
 }
 
 .countdown {
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: 30px;
-    text-align: right;
-    padding: 0 10px;
+    margin-top: 20px;
 }
 
 .countdown-item {
-    margin: 0 10px;
-    font-size: 24px;
-    font-weight: bold;
+    margin-right: 30px;
 }
 
-.countdown-item p {
-    font-size: 16px;
-    margin-top: 5px;
+.countdown-item span {
+    font-size: 40px;
+    font-weight: bold;
+    display: block;
 }
 
 .shop-btn {
-    display: inline-block;
-    background-color: rgb(246 45 78);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 90px;
+    background-color:  #0000FF;
+    color: #fff;
+    padding: 15px 30px;
+    font-size: 18px;
     text-decoration: none;
-    font-weight: bold;
-    margin-bottom: 30px;
-
+    border-radius: 5px;
+    margin-top: 20px;
+    display: inline-block;
 }
 
 .shop-btn:hover {
-    color: #7ff7b5;
+    background-color: #e0b200;
 }
 
 /* contact */
 .contact-form {
-    background: #ffffff;
-    padding: 20px 40px;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #f8f8f8;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(15, 1, 1, 0.1);
-    width: 100%;
-    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form h2 {
+    font-size: 30px;
     margin-bottom: 20px;
-  }
-  .contact-form h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #070201;
     text-align: center;
-  }
-  .contact-form .form-group {
+}
+
+.contact-form .form-group {
     margin-bottom: 15px;
-  }
-  .contact-form label {
+}
+
+.contact-form label {
+    font-size: 16px;
     display: block;
-    font-size: 14px;
-    color: #070404;
     margin-bottom: 5px;
-  }
-  .contact-form input,
-  .contact-form textarea {
+}
+
+.contact-form input,
+.contact-form textarea {
     width: 100%;
     padding: 10px;
-    font-size: 14px;
+    font-size: 16px;
     border: 1px solid #ccc;
-    border-radius: 6px;
-    outline: none;
-    }
-    .contact-form textarea {
-      resize: none;
-      height: 100px;
-    }
-    .contact-form button {
-      display: inline-block;
-      padding: 10px 20px;
-      font-size: 16px;
-      color: #fff;
-      background-color: rgb(246, 45, 78);
-      border: none;
-      border-radius: 90px;
-      cursor: pointer;
-    }
-    .contact-form button:hover {
-      color: #7ff7b5;
-    }
-  
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.contact-form button {
+    background-color: darkblue;
+    color: #fff;
+    padding: 12px 25px;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.contact-form button:hover {
+    background-color: darkblue;
+}
 /* Plans */
 .plan{
     width: 100%;
@@ -335,7 +337,7 @@ b{
     border-radius: 6px;
     margin-top: 30px;
     cursor: pointer;
-    transition: background 0.5s;  
+    
     /* change the color of add to cart */
 }
 

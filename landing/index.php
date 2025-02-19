@@ -11,6 +11,10 @@ $conn = new mysqli($servername, $username, $password, $database);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+$stmt = $conn->prepare("SELECT * FROM book LIMIT 8");
+$stmt->execute();
+$result = $stmt->get_result();
+
 
 // Fetch best-selling books
 $query = "SELECT * FROM book LIMIT 8";  // Fetches only 8 books
@@ -23,8 +27,8 @@ $result = $conn->query($query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bookstore</title>
-    <link rel="stylesheet" href="styles.css">
-     <!-- <link rel="stylesheet" href="styles.css"> -->
+     
+     <link rel="stylesheet" href="landing.css">  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <body>
     <header class="header">
@@ -53,7 +57,7 @@ $result = $conn->query($query);
     <!-- home section -->
     <section class="home" id="home">
         <div class="content">
-            <a> <img scr = "../assets/img/book0.jpg" alt=""> </a>
+            <a> <img src = "../assets/img/bg.jpg" alt=""> </a>
             <h3>Buy your favourite book from here</h3>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit odio praesentium <br>
                 ipsa quisquam minima tempore! Soluta rem incidunt quam quo doloribus mollitia dicta,<br>
@@ -86,108 +90,7 @@ $result = $conn->query($query);
 </section>
 
 <?php $conn->close(); ?>
-    <!-- Best Selling Items -->
-    <!-- <section class="best-selling">
-        <h2>Best Selling Items</h2>
-        <div class="item-grid">
-            <div class="item-card">
-             <a href="book_details.php?id=1" >  <img src="../assets/img/book1.jpg" alt=""></a>
-                <h3>Power</h3>
-                <p>by Robert</p>
-                <p class="price"><b>Rs.400</b> <span>Rs.350</span></p>
-                <div class="icons">
-                    <a href="#" class="fas fa-heart"></a>
-                    <a href="#" class="fas fa-cart-shopping"></a>
-                    <a herf="book_details.php?id=1" class="fa-solid fa-eye"></a>
-                </div>
-            </div>
-            <div class="item-card">
-            <a href="book_details.php?id=2" >  
-                <img src="../assets/img/book2.jpg" alt=""></a>
-                <h3>Thorns and Roses</h3>
-                <p>by Sarah</p>
-                <p class="price"><b>Rs.600</b> <span>Rs.500</span></p>
-                <div class="icons">
-                    <a href="#" class="fas fa-heart"></a>
-                    <a href="#" class="fas fa-cart-shopping"></a>
-                    <a herf="book_details.php?id=2" class="fa-solid fa-eye"></a>
-                </div>
-            </div>
-            <div class="item-card">
-            <a href="book_details.php?id=3" > 
-                <img src="../assets/img/book3.jpg" alt=""> </a>
-                <h3>Broken pieces</h3>
-                <p>by Tillie</p>
-                <p class="price"><b>Rs.1000</b> <span>Rs.800</span></p>
-                <div class="icons">
-                    <a href="#" class="fas fa-heart"></a>
-                    <a href="#" class="fas fa-cart-shopping"></a>
-                    <a herf="book_details.php?id=3" class="fa-solid fa-eye"></a>
-                </div>
-            </div>
-            <div class="item-card">
-            <a href="book_details.php?id=4" >   
-                <img src="../assets/img/book4.jpg" alt=""> </a>
-                <h3>Games</h3>
-                <p>by Ana</p>
-                <p class="price"><b>Rs.800</b> <span>Rs.750</span></p>
-                <div class="icons">
-                    <a href="#" class="fas fa-heart"></a>
-                    <a href="#" class="fas fa-cart-shopping"></a>
-                    <a herf="book_details.php?id=4" class="fa-solid fa-eye"></a>
-                </div>
-            </div> 
-            <div class="item-card">
-            <a href="book_details.php?id=5" >  
-                <img src="../assets/img/book5.jpg" alt=""></a>
-                <h3>Atomic habits</h3>
-                <p>by James</p>
-                <p class="price"><b>Rs.600</b> <span>Rs.500</span></p>
-                <div class="icons">
-                    <a href="#" class="fas fa-heart"></a>
-                    <a href="#" class="fas fa-cart-shopping"></a>
-                    <a herf="book_details.php?id=5" class="fa-solid fa-eye"></a>
-                </div>
-            </div>
-            <div class="item-card">
-            <a href="book_details.php?id=6" > 
-                <img src="../assets/img/book6.jpg" alt=""></a>
-                <h3>Haunting adeline</h3>
-                <p>by Colleen</p>
-                <p class="price"><b>Rs.500</b> <span>Rs.350</span></p>
-                <div class="icons">
-                    <a href="#" class="fas fa-heart"></a>
-                    <a href="#" class="fas fa-cart-shopping"></a>
-                    <a herf="book_details.php?id=6" class="fa-solid fa-eye"></a>
-                </div>
-            </div>
-            <div class="item-card">
-            <a href="book_details.php?id=7" >  
-                <img src="../assets/img/book7.jpg" alt=""> </a>
-                <h3>It ends with us</h3>
-                <p>by Colleen</p>
-                <p class="price"><b>Rs.1100</b> <span>Rs.1000</span></p>
-                <div class="icons">
-                    <a href="#" class="fas fa-heart"></a>
-                    <a href="#" class="fas fa-cart-shopping"></a>
-                    <a herf="book_details.php?id=7" class="fa-solid fa-eye"></a>
-                </div>
-            </div>
-            <div class="item-card">
-            <a href="book_details.php?id=8" >  
-                <img src="../assets/img/book8.jpg" alt=""> </a>
-                <h3>It start with us</h3>
-                <p>by Colleen</p>
-                <p class="price"><b>Rs.800</b> <span>Rs.550</span></p>
-                <div class="icons">
-                    <a href="#" class="fas fa-heart"></a>
-                    <a href="#" class="fas fa-cart-shopping"></a>
-                    <a herf="book_details.php?id=8" class="fa-solid fa-eye"></a>
-                </div>
-            </div>
-        </div>
-    </section> -->
-
+    
     <!-- discount -->
     <div class="container">
         <div class="discount-banner">
@@ -269,25 +172,28 @@ $result = $conn->query($query);
     </footer>
 
     <script>
-       const timer = setInterval(() => {
+       const countdownDate = new Date("February 28, 2025 00:00:00").getTime();
+
+const timer = setInterval(() => {
     const now = new Date().getTime();
     const timeLeft = countdownDate - now;
 
-    if (timeLeft > 0) {
-        // Calculate Days, Hours, Minutes, Seconds
+    if (timeLeft <= 0) {
+        clearInterval(timer);
+        document.getElementById("days").innerHTML = "0";
+        document.getElementById("hours").innerHTML = "0";
+        document.getElementById("minutes").innerHTML = "0";
+        document.getElementById("seconds").innerHTML = "0";
+    } else {
         const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-        const hours = Math.floor(
-            (timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
+        const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-        document.getElementById("days").innerText = days;
-        document.getElementById("hours").innerText = hours;
-        document.getElementById("minutes").innerText = minutes;
-        document.getElementById("seconds").innerText = seconds;
-    } else {
-        clearInterval(timer);
+        document.getElementById("days").innerHTML = days;
+        document.getElementById("hours").innerHTML = hours;
+        document.getElementById("minutes").innerHTML = minutes;
+        document.getElementById("seconds").innerHTML = seconds;
     }
 }, 1000);
 

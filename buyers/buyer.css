@@ -1,277 +1,355 @@
- /* Reset default styles */
-* {
+*{
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    text-decoration: none;
+    list-style: none;
+    font-family: "Arial";
 }
 
-body {
-    background-color: #f8f9fa;
-}
-
-/* Navbar Styling */
-.header {
-    background-color: darkblue; /* Blue navbar */
-    padding: 15px 0;
-}
-
-.navbar {
+.navbar{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 50px;
-}
-
-.logo h2 {
-    color: white;
-    font-size: 24px;
-}
-
-.menubar ul {
-    list-style: none;
-    display: flex;
-    gap: 20px;
-}
-
-.menubar ul li {
-    display: inline;
-}
-
-.menubar ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.menubar ul li a:hover {
-    text-decoration: underline;
-}
-
-/* Icons Styling */
-.icons {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.icons a {
-    color: white;
-    font-size: 20px;
-    text-decoration: none;
-}
-
-.icons a:hover {
-    color: #f1f1f1;
-}
-
-/* Logout Button */
-.icons button {
-    background-color: red;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    font-size: 16px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-
-.icons button a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.icons button:hover {
-    background-color: darkred;
-}
-
-/* Home Section */
-.home {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80vh;
     text-align: center;
-    background: url('../assets/img/bookstore-bg.jpg') no-repeat center center/cover;
-    color: white;
+    width: 100%;
+    height: 70px;
+    background-color:  #0000FF;
+    
 }
 
-.home .content h3 {
+.navbar h2{
+    color: rgb(248, 247, 244);
     font-size: 35px;
-    margin-bottom: 15px;
+    padding: 0px 20px;
 }
 
-.home .content p {
-    font-size: 18px;
-    max-width: 600px;
-    margin: 0 auto 20px;
-    line-height: 1.6;
+.home .content img{
+     display: flex;
+     
+}
+.menubar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 80px;
 }
 
-.button {
-    padding: 10px 20px;
-    font-size: 18px;
-    background: red;
-    color: white;
+.menubar li{
+    display: inline-block;
+}
+.menubar :hover{
+    color:rgb(99, 253, 194);
+}
+
+.menubar li a{
+    color: aliceblue;
+    margin-right: 20px;
+    padding: 0px 10px;
+    font-size: 20px;
+    font-weight: 500;
+}
+button{
+    font-size: 1.2rem;
     border: none;
-    cursor: pointer;
-    border-radius: 5px;
+    outline: none;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background-color: rgb(246, 45, 78);
+    color: white;
+}
+.icons{
+    padding: 0 12px;
+}
+.icons a{
+    margin: 5px;
 }
 
-.button:hover {
-    background: darkred;
+.fa-magnifying-glass{
+    color: white;
 }
-
-/* Best Selling Section */
-.best-selling {
-    padding: 50px;
+.fa-heart{
+    color: rgb(252, 247, 247);
+}
+.fa-cart-shopping{
+    color: white;
+}
+ 
+/* hero section */
+section{
+    padding:0px 30px;
+} 
+.home{
+    display: flex;
+    align-items: center;
+    min-height: 90vh;
+    /* background:url(./assets/img/) no-repeat;
+    background-position: right;  */
+}
+.heading{
     text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+ /* Best Selling Items */
+ .best-selling {
+    padding: 40px 0;
+    background-color: #f4f4f4;
 }
 
 .best-selling h2 {
-    font-size: 28px;
-    margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 30px;
 }
 
 .item-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    grid-gap: 20px;
 }
 
 .item-card {
-    background: white;
-    padding: 15px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
     border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
     text-align: center;
+    transition: 1s;
+}
+
+.item-card:hover{
+    transform: scale(1.1);
+    z-index: 2;
 }
 
 .item-card img {
-    width: 100%;
+    max-width: 100%;
     height: 200px;
     object-fit: cover;
     border-radius: 5px;
 }
 
 .item-card h3 {
-    font-size: 20px;
-    margin: 10px 0;
+    margin-top: 10px;
+    font-size: 18px;
 }
 
 .item-card p {
-    font-size: 16px;
-}
-
-.price {
-    color: red;
-    font-weight: bold;
-}
-
-.item-card .icons {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.item-card .icons a {
-    color: #007BFF;
-    font-size: 18px;
-}
-
-.item-card .icons button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
+    margin-top: 5px;
     color: black;
 }
 
-.item-card .icons a:hover {
-    color: darkblue;
+.item-card .icons {
+    margin-top: 10px;
 }
 
-/* Discount Banner */
-.container {
+.item-card .icons a, .item-card .icons button {
+    color: #302e2e;
+    background-color: transparent;
+    border: none;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.item-card .icons a:hover, .item-card .icons button:hover {
+    color: #fc5050;
+}
+
+b{
+    text-decoration: line-through;
+    color: grey;
+}
+
+/* duration */
+.discount-banner {
     display: flex;
-    justify-content: center;
     align-items: center;
-    background: #ffcc00;
-    padding: 40px 0;
-    text-align: center;
+    justify-content: space-between;
+    background-color: palevioletred;
+    color: white;
+    padding: 40px 20px
+    
 }
 
 .discount-banner img {
-    max-width: 100%;
-    height: auto;
+    width: 500px;
+    height: 500px;
+    object-fit: cover;
+    border-radius: 8px;
 }
 
 .discount-banner h2 {
-    font-size: 28px;
-    margin-bottom: 10px;
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 20px;
 }
 
 .countdown {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 15px;
+    margin-top: 20px;
 }
 
 .countdown-item {
-    background: white;
-    padding: 10px;
-    border-radius: 5px;
-    text-align: center;
+    margin-right: 30px;
 }
 
 .countdown-item span {
-    font-size: 24px;
+    font-size: 40px;
     font-weight: bold;
+    display: block;
 }
 
-.countdown-item p {
-    font-size: 14px;
+.shop-btn {
+    background-color: darkblue;
+    color: #fff;
+    padding: 15px 30px;
+    font-size: 18px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    display: inline-block;
 }
 
-/* Footer */
-footer {
-    background:  #fce3e3;
-    color: white;
+.shop-btn:hover {
+    background-color: #e0b200;
+}
+
+/* contact */
+.contact-form {
+    max-width: 600px;
+    margin: 40px auto;
     padding: 30px;
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form h2 {
+    font-size: 30px;
+    margin-bottom: 20px;
     text-align: center;
 }
 
-.footer_main {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
+.contact-form .form-group {
+    margin-bottom: 15px;
 }
 
-.footer_tag {
-    margin: 10px;
+.contact-form label {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 5px;
 }
 
-.footer_tag h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 15px;
 }
 
-.footer_tag p {
-    font-size: 14px;
-    margin: 5px 0;
-}
-
-.footer_tag i {
-    font-size: 20px;
-    margin: 5px;
+.contact-form button {
+    background-color: darkblue;
+    color: #fff;
+    padding: 12px 25px;
+    border: none;
+    font-size: 18px;
     cursor: pointer;
+    width: 100%;
 }
 
-.footer_tag i:hover {
-    color: #007BFF;
+.contact-form button:hover {
+    background-color: darkblue;
 }
+/* Plans */
+.plan{
+    width: 100%;
+    min-height: 100vh;
+    background: #5c539d;
+}
+
+.plan h2{
+    color: #fff;
+    font-size: 32px;
+    padding: 50px 0;
+    text-align: center;
+}
+
+.price-row{
+    width: 90%;
+    max-width: 1100px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 25px;
+}
+
+.price-col{
+    background: #1f283b;
+    padding: 10% 15%;
+    border-radius: 10px;
+    color: #fff;
+    text-align: center;
+}
+
+.price-col p{
+    font-size: 22px;
+}
+
+.price-col h3{
+    font-size: 44px;
+    margin: 20px 0 40px;
+    font-weight: 500;
+}
+
+.price-col h3 span{
+    font-size: 16px;
+}
+
+.price-col ul{
+    text-align: left;
+    margin: 20px 0;
+    color: #ddd;
+}
+
+.price-col ul li{
+    margin: 15px 0;
+}
+
+.price-col ul li::before{
+    content: '\2022';
+    color: #e33059;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.price-col button{
+    width: 100%;
+    padding: 14px 0;
+    background: transparent;
+    color: #fff;
+    font-size: 15px;
+    border: 1px solid #e33058;
+    border-radius: 6px;
+    margin-top: 30px;
+    cursor: pointer;
+    
+    /* change the color of add to cart */
+}
+
+.price-col button:hover{
+    background: #e33058;
+}
+/*Footer*/
+.footer_main{
+    padding: 50px 20px;
+    background: #fce3e3;
+    display: flex;
+    gap: 220px;
+    justify-content: center;
+    align-items: center;
+}  

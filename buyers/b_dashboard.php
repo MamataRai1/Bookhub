@@ -1,107 +1,189 @@
+<?php
+// Database connection
+$servername = "localhost"; 
+$username = "root"; 
+$password = ""; 
+$database = "bookhub"; 
+
+$conn = new mysqli($servername, $username, $password, $database);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch Best-Selling Books (LIMIT 8)
+$stmt = $conn->prepare("SELECT * FROM book LIMIT 8");
+$stmt->execute();
+$books = $stmt->get_result();
+
+// Fetch Buyer Info (Replace with session values if using login system)
+$buyer_name = "John Doe";  // Replace with actual session variable
+$buyer_email = "johndoe@example.com"; // Replace with actual session variable
+
+if (isset($_SESSION['buyer_id'])) {
+    $cartQuery = $conn->prepare("SELECT COUNT(*) AS total FROM cart WHERE buyer_id = ?");
+    $cartQuery->bind_param("i", $_SESSION['buyer_id']);
+    $cartQuery->execute();
+    $result = $cartQuery->get_result();
+    $cartCount = $result->fetch_assoc()['total'];
+} else {
+    $cartCount = 0;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bookstore</title>
-    <link rel="stylesheet" href="./buyer.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Buyer Dashboard | BookHub</title>
+     
+    <link rel="stylesheet" href="buyer.css">  
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+    
+    <style>
+        /* Profile Dropdown */
+        .profile-menu {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-icon {
+            font-size: 22px;
+            cursor: pointer;
+            color: #333;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: white;
+            min-width: 180px;
+            box-shadow:  rgba(255, 255, 255, 1);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 100;
+        }
+
+        .dropdown-content p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        .dropdown-content .logout-btn {
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+            background: #e74c3c;
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .dropdown-content .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        .profile-menu:hover .dropdown-content {
+            display: block;
+        }
+    </style>
 </head>
+
 <body>
+    <!-- HEADER -->
     <header class="header">
         <nav class="navbar">
             <div class="logo">
-                <h2>Bookhub</h2>
+                <h2>BookHub</h2>
             </div>
             <div class="menubar">
                 <ul>
-           
                     <li><a href="category">Categories</a></li>
-  
-                    
-                    <li><a href="#profile_section">Profile</a></li>
-                    <li><a href="#orders_section">Orders</a></li>
-                    <li><a href="#cart_section">Cart</a></li>
+                    <li><a href="/BOOKHUB/sellers/s_signup.php">Be a seller</a></li>
+                    <li><a href="#contact_section">Contact us</a></li>
                 </ul>
             </div>
             <div class="icons">
                 <a href="#" class="fas fa-magnifying-glass"></a>
-                <a href="#" class="fas fa-heart"></a>
-                <a href="#cart_section" class="fas fa-cart-shopping"></a>
-  
-                <button><a href="/BOOKHUB/buyers/logout.php">Log Out</a></button>
+                <a href="../buyers/cart.php" class="fas fa-cart-shopping">
+                    <span><?php echo $cartCount; ?></span>
+                 </a>
+                <a href="#" class="fas fa-cart-shopping"></a>
+                <div class="profile-menu">
+                    <a href="profile.php" class="fas fa-user profile-icon"></a>
+                    
+                         
+                       
+                    </div>
+               <button> <a href="logout.php" class="logout-btn">LOG OUT</a></button>
+                <!-- Profile Dropdown -->
+                
+                </div>
             </div>
         </nav>
     </header>
 
-    <!-- Home Section -->
+    <!-- HOME SECTION -->
     <section class="home" id="home">
         <div class="content">
-            <h3>Buy your favourite book from here</h3>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit odio praesentium <br>
-                ipsa quisquam minima tempore! Soluta rem incidunt quam quo doloribus mollitia dicta,<br>
-                laudantium molestias assumenda cum blanditiis possimus libero?</p>
-            <a href="ldkksdl" target="none"><br>
-                <button class="button"> Shop Now</button>
-            </a>
+            <img src="../assets/img/bg.jpg" alt="Background">
+            <h3>Buy your favorite book from here</h3>
+            <p>Discover amazing books at affordable prices. We offer a variety of books in different categories.</p>
+            <a href="#"><button class="button">Shop Now</button></a>
         </div>
     </section>
-
-    <!-- Best Selling Items -->
-    <section class="best-selling">
-        <h2>Best Selling Items</h2>
-        <div class="item-grid">
-            <!-- Repeat this block for each book -->
+     
+    <!-- BEST-SELLING BOOKS -->
+<section class="best-selling">
+    <h2>Best Selling Items</h2>
+    <div class="item-grid">
+        <?php while ($row = $books->fetch_assoc()): ?>
             <div class="item-card">
-                <a href="page.html"><img src="../assets/img/book2.jpg" alt=""></a>
-                <h3>Power</h3>
-                <p>by Robert</p>
-                <p class="price"><b>Rs.400</b> <span>Rs.350</span></p>
+                <a href="../landing/book_details.php?id=<?php echo $row['book_id']; ?>">
+                    <img src="../assets/img/<?php echo htmlspecialchars($row['image']); ?>" alt="">
+                </a>
+                <h3><?php echo htmlspecialchars($row['title']); ?></h3>
+                <p>by <?php echo htmlspecialchars($row['author']); ?></p>
+                <p class="price"><b>Rs. <?php echo $row['price']; ?></b></p>
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
-                    <a href="#cart_section" class="fas fa-cart-shopping"></a>
-                    <button><i class="fa-solid fa-eye"></i></button>
+                    <button class="add-to-cart-btn" data-id="<?php echo $row['book_id']; ?>">
+                        <i class="fas fa-cart-shopping"></i> Add to Cart
+                    </button>
+                    <a href="../landing/book_details.php?id=<?php echo $row['book_id']; ?>" class="fa-solid fa-eye"></a>
                 </div>
             </div>
-            <!-- Repeat for other books -->
+        <?php endwhile; ?>
+    </div>
+</section>
+
+    <!-- CONTACT -->
+    <section id="contact_section">
+        <div class="contact-form">
+            <h2>Contact Us</h2>
+            <form action="#" method="post">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Your Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" placeholder="Your Message..." required></textarea>
+                </div>
+                <button type="submit">Send Message</button>
+            </form>
         </div>
     </section>
 
-    <!-- Discount Banner -->
-    <div class="container">
-        <div class="discount-banner">
-            <img src="../assets/img/book10.png" width="500px" height="500px" alt="">
-            <h2>30% Discount<br>On All Items.<br>Hurry Up !!!</h2>
-            <div class="countdown">
-                <div class="countdown-item">
-                    <span id="days">13</span>
-                    <p>Days</p>
-                </div>
-                <div class="countdown-item">
-                    <span id="hours">23</span>
-                    <p>Hrs</p>
-                </div>
-                <div class="countdown-item">
-                    <span id="minutes">58</span>
-                    <p>Min</p>
-                </div>
-                <div class="countdown-item">
-                    <span id="seconds">52</span>
-                    <p>Sec</p>
-                </div>
-            </div>
-            <a href="#" class="shop-btn">Shop Collection</a>
-        </div>
-    </div>
-
-     
-     
-
-    <!-- Cart Section -->
-    
-         
-
-    <!-- Footer -->
+    <!-- FOOTER -->
     <footer>
         <div class="footer_main">
             <div class="footer_tag">
@@ -116,7 +198,7 @@
                 <p>Exclusive Discount</p>
                 <p>Secure Payments</p>
                 <p>24/7 Service</p>
-                <p>Fast and reliable delivery</p>
+                <p>Fast and Reliable Delivery</p>
             </div>
             <div class="footer_tag">
                 <h2>Follow us</h2>
@@ -127,26 +209,33 @@
             </div>
         </div>
     </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    $(".add-to-cart-btn").click(function() {
+        let book_id = $(this).data("id");
 
-    <script>
-        const timer = setInterval(() => {
-            const now = new Date().getTime();
-            const timeLeft = countdownDate - now;
-
-            if (timeLeft > 0) {
-                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
-
-                document.getElementById("days").innerText = days;
-                document.getElementById("hours").innerText = hours;
-                document.getElementById("minutes").innerText = minutes;
-                document.getElementById("seconds").innerText = seconds;
-            } else {
-                clearInterval(timer);
+        $.ajax({
+            url: "add_to_cart.php",
+            type: "POST",
+            data: { book_id: book_id },
+            success: function(response) {
+                let data = JSON.parse(response);
+                if (data.status == "success") {
+                    alert("Book added to cart!");
+                    $(".fas.fa-cart-shopping span").text(data.cart_count); // Update cart count
+                } else {
+                    alert("Please log in first!");
+                    window.location.href = "../buyers/login.php";
+                }
+            },
+            error: function() {
+                alert("Something went wrong!");
             }
-        }, 1000);
-    </script>
+        });
+    });
+});
+</script>
+
 </body>
 </html>
