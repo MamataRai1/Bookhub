@@ -1,5 +1,5 @@
 <?php
-session_start();  // Start session at the top
+session_start();  // Start session at the very top
 
 // Database connection
 $conn = new mysqli('localhost', 'root', '', 'bookhub');
@@ -9,15 +9,14 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-$loginError = ""; // To store error messages
+$loginError = ""; // Error message storage
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
     $gmail = trim($_POST['mail']);  
     $password = trim($_POST['pass']); 
 
-    if (!empty($gmail) && !empty($password) && !is_numeric($gmail)) {
-        // Check if the user exists
-        $query = "SELECT * FROM users WHERE email = ?";  // Change 'form' to 'users'
+    if (!empty($gmail) && !empty($password)) {
+        $query = "SELECT * FROM users WHERE email = ?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("s", $gmail);
         $stmt->execute();
@@ -26,12 +25,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
 
-            // **Check password (If hashed, use password_verify)**
             if (password_verify($password, $user['password'])) {  
                 $_SESSION['b_loginid'] = $user['users_id']; // Store user ID in session
+                $_SESSION['b_username'] = $user['username']; // Store username if needed
 
-                // **Ensure proper redirection**
-                echo "<script>window.location.href='b_dashboard.php';</script>";
+                // Redirect properly
+                header("Location: b_dashboard.php");
                 exit;
             } else {
                 $loginError = "Wrong password!";
@@ -43,6 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $loginError = "Invalid email or password!";
     }
 }
+
+ 
 ?>
 
 <!DOCTYPE html>

@@ -1,0 +1,162 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+.book-details-container {
+    display: flex;
+    max-width: 900px;
+    margin: 50px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.book-image img {
+    width: 250px;
+    height: auto;
+    border-radius: 5px;
+}
+
+.book-info {
+    margin-left: 30px;
+}
+
+.book-info h1 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.author {
+    font-size: 18px;
+    color: gray;
+}
+
+.shop-name {
+    font-size: 18px;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.price {
+    font-size: 22px;
+    font-weight: bold;
+    color: #E67E22;
+}
+
+.delivery-info {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #666;
+}
+
+.delivery-info i {
+    color: #E67E22;
+}
+
+.description {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #444;
+}
+
+.buttons {
+    margin-top: 15px;
+}
+
+.buy-btn, .cart-btn {
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.buy-btn {
+    background-color: #ff6600;
+    color: white;
+}
+
+.cart-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.buy-btn:hover, .cart-btn:hover {
+    opacity: 0.8;
+}
+
+/* Ratings */
+.ratings p {
+    font-size: 18px;
+    color: #ff9800;
+}
+
+/* Reviews Section */
+.reviews-section {
+    max-width: 800px;
+    margin: 30px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.review {
+    background: #f9f9f9;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+
+/* Popup Login Form */
+ body.popup-open {
+    overflow: hidden; /* Disable background scroll */
+}
+
+/* Main Popup */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    width: 400px; /* Fixed width */
+    height: auto; /* Adjusts to content */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    overflow: hidden; /* Prevent scrolling */
+}
+
+/* Popup Content */
+.popup-content {
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* No Scroll */
+    position: relative;
+}
+
+/* Close button */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* Fix iframe */
+.popup iframe {
+    width: 100%;
+    height: 400px; /* Adjust height properly */
+    border: none;
+    overflow: hidden; /* No Scroll */
+    display: block;
+}

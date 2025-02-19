@@ -1,3 +1,22 @@
+<?php
+// Database connection
+$servername = "localhost"; 
+$username = "root"; 
+$password = ""; 
+$database = "bookhub"; 
+
+$conn = new mysqli($servername, $username, $password, $database);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Fetch best-selling books
+$query = "SELECT * FROM book LIMIT 8";  // Fetches only 8 books
+$result = $conn->query($query);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +34,7 @@
             </div>
             <div class="menubar">
                 <ul>
-                    <li><a href="index.html">Home</a></li>
+                    
                     <li><a href="category">Categories</a></li>
                     <li><a href="/BOOKHUB/sellers/s_signup.php">Be a seller</a></li>
                     <li><a href="#contact_section">Contact us</a></li>
@@ -44,101 +63,130 @@
             </a>
         </div>
     </section>
-
-    <!-- Best Selling Items -->
+     
     <section class="best-selling">
+    <h2>Best Selling Items</h2>
+    <div class="item-grid">
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <div class="item-card">
+                <a href="book_details.php?id=<?php echo $row['book_id']; ?>">
+                    <img src="../assets/img/<?php echo htmlspecialchars($row['image']); ?>" alt="">
+                </a>
+                <h3><?php echo htmlspecialchars($row['title']); ?></h3>
+                <p>by <?php echo htmlspecialchars($row['author']); ?></p>
+                <p class="price"><b>Rs.<?php echo $row['price']; ?></b></p>
+                <div class="icons">
+                    <a href="#" class="fas fa-heart"></a>
+                    <a href="#" class="fas fa-cart-shopping"></a>
+                    <a href="book_details.php?id=<?php echo $row['book_id']; ?>" class="fa-solid fa-eye"></a>
+                </div>
+            </div>
+        <?php endwhile; ?>
+    </div>
+</section>
+
+<?php $conn->close(); ?>
+    <!-- Best Selling Items -->
+    <!-- <section class="best-selling">
         <h2>Best Selling Items</h2>
         <div class="item-grid">
             <div class="item-card">
-             <a href="page.html" >  <img src="../assets/img/book1.jpg" alt=""></a>
+             <a href="book_details.php?id=1" >  <img src="../assets/img/book1.jpg" alt=""></a>
                 <h3>Power</h3>
                 <p>by Robert</p>
                 <p class="price"><b>Rs.400</b> <span>Rs.350</span></p>
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
                     <a href="#" class="fas fa-cart-shopping"></a>
-                    <button><i class="fa-solid fa-eye"></i></button>
+                    <a herf="book_details.php?id=1" class="fa-solid fa-eye"></a>
                 </div>
             </div>
             <div class="item-card">
-                <img src="../assets/img/book2.jpg" alt="">
+            <a href="book_details.php?id=2" >  
+                <img src="../assets/img/book2.jpg" alt=""></a>
                 <h3>Thorns and Roses</h3>
                 <p>by Sarah</p>
                 <p class="price"><b>Rs.600</b> <span>Rs.500</span></p>
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
                     <a href="#" class="fas fa-cart-shopping"></a>
-                    <button><i class="fa-solid fa-eye"></i></button>
+                    <a herf="book_details.php?id=2" class="fa-solid fa-eye"></a>
                 </div>
             </div>
             <div class="item-card">
-                <img src="../assets/img/book3.jpg" alt="">
+            <a href="book_details.php?id=3" > 
+                <img src="../assets/img/book3.jpg" alt=""> </a>
                 <h3>Broken pieces</h3>
                 <p>by Tillie</p>
                 <p class="price"><b>Rs.1000</b> <span>Rs.800</span></p>
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
                     <a href="#" class="fas fa-cart-shopping"></a>
-                    <button><i class="fa-solid fa-eye"></i></button>
+                    <a herf="book_details.php?id=3" class="fa-solid fa-eye"></a>
                 </div>
             </div>
             <div class="item-card">
-                <img src="../assets/img/book4.jpg" alt="">
+            <a href="book_details.php?id=4" >   
+                <img src="../assets/img/book4.jpg" alt=""> </a>
                 <h3>Games</h3>
                 <p>by Ana</p>
                 <p class="price"><b>Rs.800</b> <span>Rs.750</span></p>
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
                     <a href="#" class="fas fa-cart-shopping"></a>
-                    <button><i class="fa-solid fa-eye"></i></button>
+                    <a herf="book_details.php?id=4" class="fa-solid fa-eye"></a>
                 </div>
             </div> 
             <div class="item-card">
-                <img src="../assets/img/book5.jpg" alt="">
+            <a href="book_details.php?id=5" >  
+                <img src="../assets/img/book5.jpg" alt=""></a>
                 <h3>Atomic habits</h3>
                 <p>by James</p>
                 <p class="price"><b>Rs.600</b> <span>Rs.500</span></p>
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
                     <a href="#" class="fas fa-cart-shopping"></a>
-                    <button><i class="fa-solid fa-eye"></i></button>
+                    <a herf="book_details.php?id=5" class="fa-solid fa-eye"></a>
                 </div>
             </div>
             <div class="item-card">
-                <img src="../assets/img/book6.jpg" alt="">
+            <a href="book_details.php?id=6" > 
+                <img src="../assets/img/book6.jpg" alt=""></a>
                 <h3>Haunting adeline</h3>
                 <p>by Colleen</p>
                 <p class="price"><b>Rs.500</b> <span>Rs.350</span></p>
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
                     <a href="#" class="fas fa-cart-shopping"></a>
-                    <button><i class="fa-solid fa-eye"></i></button>
+                    <a herf="book_details.php?id=6" class="fa-solid fa-eye"></a>
                 </div>
             </div>
             <div class="item-card">
-                <img src="../assets/img/book7.jpg" alt="">
+            <a href="book_details.php?id=7" >  
+                <img src="../assets/img/book7.jpg" alt=""> </a>
                 <h3>It ends with us</h3>
                 <p>by Colleen</p>
                 <p class="price"><b>Rs.1100</b> <span>Rs.1000</span></p>
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
                     <a href="#" class="fas fa-cart-shopping"></a>
-                    <button><i class="fa-solid fa-eye"></i></button>
+                    <a herf="book_details.php?id=7" class="fa-solid fa-eye"></a>
                 </div>
             </div>
             <div class="item-card">
-                <img src="../assets/img/book8.jpg" alt="">
+            <a href="book_details.php?id=8" >  
+                <img src="../assets/img/book8.jpg" alt=""> </a>
                 <h3>It start with us</h3>
                 <p>by Colleen</p>
                 <p class="price"><b>Rs.800</b> <span>Rs.550</span></p>
                 <div class="icons">
                     <a href="#" class="fas fa-heart"></a>
                     <a href="#" class="fas fa-cart-shopping"></a>
-                    <button><i class="fa-solid fa-eye"></i></button>
+                    <a herf="book_details.php?id=8" class="fa-solid fa-eye"></a>
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <!-- discount -->
     <div class="container">
