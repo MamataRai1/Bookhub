@@ -62,14 +62,25 @@ if (isset($_SESSION['buyer_id'])) {
             </div>
             <div class="icons">
             <form id="searchForm" action="search.php" method="GET">
-    <input type="text" id="searchInput" name="search" placeholder="Search books..." required>
-    <a href="#" class="fas fa-magnifying-glass" id="searchBtn"></a>
-</form>
+              <input type="text" id="searchInput" name="search" placeholder="Search books..." required>
+              <a href="#" class="fas fa-magnifying-glass" id="searchBtn"></a>
+            </form>
 
-                <a href="../buyers/cart.php" class="fas fa-cart-shopping">
+            <form action="add_to_cart.php" method="POST">
+               <input type="hidden" name="book_id" value="BOOK_ID_HERE">
+                <a href="viewcart.php" class="fas fa-cart-shopping"></a>
+           </form>
+
+
                     <span><?php echo $cartCount; ?></span>
                  </a>
                  
+                 <form action="add_to_cart.php" method="POST">
+                  <input type="hidden" name="book_id" value="BOOK_ID_HERE">
+                  <a href="view_wishlist.php" class="fas fa-heart"></a>
+
+                  </form>
+
                 <div class="profile-menu">
                     <a href="profile.php" class="fas fa-user profile-icon"></a>
                     

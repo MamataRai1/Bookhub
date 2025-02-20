@@ -48,11 +48,24 @@ $result = $conn->query($query);
             </div>
             <div class="icons">
             <form id="searchForm" action="filter.php" method="GET">
-    <input type="text" id="searchInput" name="search" placeholder="Search books..." required>
-    <a href="#" class="fas fa-magnifying-glass" id="searchBtn"></a>
-</form>
-                <a href="#" class="fas fa-heart"></a>
-                <a href="#" class="fas fa-cart-shopping"></a>
+               <input type="text" id="searchInput" name="search" placeholder="Search books..." required>
+                <a href="#" class="fas fa-magnifying-glass" id="searchBtn"></a>
+            </form>
+
+            <form action="add_to_cart.php" method="POST">
+               <input type="hidden" name="book_id" value="BOOK_ID_HERE">
+                <a href="cart.php" class="fas fa-cart-shopping"></a>
+           </form>
+
+
+                     
+                  
+                 
+                 <form action="add_to_cart.php" method="POST">
+                  <input type="hidden" name="book_id" value="BOOK_ID_HERE">
+                  <a href="wishlist.php" class="fas fa-heart"></a>
+
+                  </form>
                 <a href="/BOOKHUB/buyers/b_login.php">
                     <button><i class="fa-solid fa-user"></i>LOG IN</button>
                 </a>

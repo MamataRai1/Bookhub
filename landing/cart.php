@@ -44,3 +44,5 @@ if (isset($_POST['book_id']) && isset($_SESSION['buyer_id'])) {
 
 $conn->close();
 ?>
+
+
