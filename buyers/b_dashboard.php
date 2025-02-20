@@ -1,4 +1,5 @@
 <?php
+session_start();
 // Database connection
 $servername = "localhost"; 
 $username = "root"; 
@@ -42,55 +43,7 @@ if (isset($_SESSION['buyer_id'])) {
     <link rel="stylesheet" href="buyer.css">  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
     
-    <style>
-        /* Profile Dropdown */
-        .profile-menu {
-            position: relative;
-            display: inline-block;
-        }
-
-        .profile-icon {
-            font-size: 22px;
-            cursor: pointer;
-            color: #333;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background: white;
-            min-width: 180px;
-            box-shadow:  rgba(255, 255, 255, 1);
-            padding: 10px;
-            border-radius: 5px;
-            z-index: 100;
-        }
-
-        .dropdown-content p {
-            margin: 5px 0;
-            font-size: 14px;
-        }
-
-        .dropdown-content .logout-btn {
-            display: block;
-            margin-top: 10px;
-            text-align: center;
-            background: #e74c3c;
-            color: white;
-            padding: 8px;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        .dropdown-content .logout-btn:hover {
-            background: #c0392b;
-        }
-
-        .profile-menu:hover .dropdown-content {
-            display: block;
-        }
-    </style>
+ 
 </head>
 
 <body>
@@ -108,19 +61,25 @@ if (isset($_SESSION['buyer_id'])) {
                 </ul>
             </div>
             <div class="icons">
-                <a href="#" class="fas fa-magnifying-glass"></a>
+            <form id="searchForm" action="search.php" method="GET">
+    <input type="text" id="searchInput" name="search" placeholder="Search books..." required>
+    <a href="#" class="fas fa-magnifying-glass" id="searchBtn"></a>
+</form>
+
                 <a href="../buyers/cart.php" class="fas fa-cart-shopping">
                     <span><?php echo $cartCount; ?></span>
                  </a>
-                <a href="#" class="fas fa-cart-shopping"></a>
+                 
                 <div class="profile-menu">
                     <a href="profile.php" class="fas fa-user profile-icon"></a>
                     
                          
                        
                     </div>
-               <button> <a href="logout.php" class="logout-btn">LOG OUT</a></button>
-                <!-- Profile Dropdown -->
+                    <div class="logout-container">
+                      <a href="logout.php" class="logout-btn">LOG OUT</a>
+                        </div>
+
                 
                 </div>
             </div>
@@ -128,14 +87,23 @@ if (isset($_SESSION['buyer_id'])) {
     </header>
 
     <!-- HOME SECTION -->
-    <section class="home" id="home">
-        <div class="content">
-            <img src="../assets/img/bg.jpg" alt="Background">
+    <!-- HERO SECTION -->
+<section class="home">
+    <div class="content">
+        <!-- Left Side - Text -->
+        <div class="text-section">
             <h3>Buy your favorite book from here</h3>
             <p>Discover amazing books at affordable prices. We offer a variety of books in different categories.</p>
             <a href="#"><button class="button">Shop Now</button></a>
         </div>
-    </section>
+        
+        <!-- Right Side - Image -->
+        <div class="image-section">
+            <img src="../assets/img/bg.jpg" alt="Bookshelf Image">
+        </div>
+    </div>
+</section>
+
      
     <!-- BEST-SELLING BOOKS -->
 <section class="best-selling">
@@ -211,6 +179,10 @@ if (isset($_SESSION['buyer_id'])) {
     </footer>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    document.getElementById('searchBtn').addEventListener('click', function () {
+    document.getElementById('searchForm').submit();
+});
+
 $(document).ready(function() {
     $(".add-to-cart-btn").click(function() {
         let book_id = $(this).data("id");
