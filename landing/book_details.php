@@ -89,8 +89,8 @@ $conn->close();
 
             <p class="description"><?php echo nl2br(htmlspecialchars($book['description'])); ?></p>
             <div class="buttons">
-                <button onclick="window.location.href='../buyers/b_login.php'" class="buy-btn">Buy Now</button>
-                <button onclick="window.location.href='../buyers/b_login.php' " class="cart-btn">Add to Cart</button>
+                <button onclick="window.location.href='../payment/payment.php?book_id=<?php echo $book['book_id']; ?>'" class="buy-btn">Buy Now</button>
+                <button onclick="window.location.href='../buyers/add_to_cart.php?book_id=<?php echo $book['book_id']; ?>' " class="cart-btn">Add to Cart</button>
 
             </div>
         </div>
@@ -118,6 +118,14 @@ $conn->close();
 
     <!-- JavaScript for Popup -->
     <script>
+        function buyNow(bookId) {
+            if (!bookId) {
+                alert("Invalid Book ID");
+                return;
+            }
+            window.open(`../payment/payment.php?id=${bookId}`, '_blank');
+        }
+
         function showBuyerLogin() {
             document.body.classList.add("popup-open"); // Stop background scroll
             document.getElementById("loginpopup").style.display = "flex";
@@ -128,12 +136,6 @@ $conn->close();
             document.getElementById("loginpopup").style.display = "none";
         }
     </script>
-
-
-
-
-
-
 
 </body>
 

@@ -1,5 +1,8 @@
 <?php
 session_start();
+
+// print_r($_SESSION);
+
 // Database connection
 $servername = "localhost"; 
 $username = "root"; 
@@ -66,18 +69,18 @@ if (isset($_SESSION['buyer_id'])) {
               <a href="#" class="fas fa-magnifying-glass" id="searchBtn"></a>
             </form>
 
-            <form action="add_to_cart.php" method="POST">
-               <input type="hidden" name="book_id" value="BOOK_ID_HERE">
-                <a href="viewcart.php" class="fas fa-cart-shopping"></a>
+            <form action="cart.php" method="POST">
+               <input type="hidden" name="book_id" value="BOOK_ID_HERE ">
+                <a href="cart.php" class="fas fa-cart-shopping"></a>
            </form>
 
 
                     <span><?php echo $cartCount; ?></span>
                  </a>
                  
-                 <form action="add_to_cart.php" method="POST">
+                 <form action="wishlist.php" method="POST">
                   <input type="hidden" name="book_id" value="BOOK_ID_HERE">
-                  <a href="view_wishlist.php" class="fas fa-heart"></a>
+                  <a href="wishlist.php" class="fas fa-heart"></a>
 
                   </form>
 
