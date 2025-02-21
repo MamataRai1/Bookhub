@@ -33,12 +33,12 @@ if ($conn->connect_error) {
 <body>
   <aside>
     <h1>Admin Panel</h1>
-    <a href="#overview">Overview</a>
+    <!-- <a href="#overview">Overview</a> -->
     <a href="muser.php">Manage Users</a>
     <a href="morder.php">Manage Orders</a>
-    <a href="#manage-products">Manage Products</a>
-    <a href="#reports">Reports</a>
-    <a href="#settings">Settings</a>
+    <!-- <a href="#manage-products">Manage Products</a> -->
+    <!-- <a href="#reports">Reports</a> -->
+    <!-- <a href="#settings">Settings</a> -->
   </aside>
 
   <div class="main-content">
@@ -59,7 +59,7 @@ if ($conn->connect_error) {
     </div>
 
    
-    <!-- Header -->
+    <!-- Header
     <div class="header">
       <h1>Admin Dashboard</h1>
     </div>
@@ -82,7 +82,7 @@ if ($conn->connect_error) {
         <h3>Monthly Sales</h3>
         <p>R.S<?php echo $monthlySales; ?></p>
       </div>
-    </section>
+    </section> -->
 
     <!-- Order History Section -->
     <section class="table-section">

@@ -1,0 +1,160 @@
+ /* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  min-height: 100vh;
+  background-color: #f6f8fa;
+  color: #333;
+}
+
+/* Sidebar Styles */
+aside {
+  width: 250px;
+  background: #2c3e50;
+  color: white;
+  padding: 25px 15px;
+  height: 100vh;
+  position: fixed;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+aside h1 {
+  font-size: 24px;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #3d5166;
+  text-align: center;
+}
+
+aside a {
+  display: block;
+  color: #ecf0f1;
+  text-decoration: none;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+aside a:hover {
+  background-color: #34495e;
+  transform: translateX(5px);
+}
+
+/* Main Content Styles */
+.main-content {
+  flex: 1;
+  margin-left: 250px;
+  padding: 30px;
+}
+
+h2 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #eaeaea;
+}
+
+h3 {
+  color: #34495e;
+  margin-top: 25px;
+  margin-bottom: 15px;
+}
+
+p {
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+/* Button Styles */
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  margin: 5px 10px 15px 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+button:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button[onclick*="remove"], button[onclick*="reject"] {
+  background-color: #e74c3c;
+}
+
+button[onclick*="remove"]:hover, button[onclick*="reject"]:hover {
+  background-color: #c0392b;
+}
+
+button[onclick*="block"] {
+  background-color: #f39c12;
+}
+
+button[onclick*="block"]:hover {
+  background-color: #d35400;
+}
+
+button[onclick*="approve"] {
+  background-color: #2ecc71;
+}
+
+button[onclick*="approve"]:hover {
+  background-color: #27ae60;
+}
+
+/* List Styles */
+ul {
+  list-style-type: none;
+  margin-bottom: 30px;
+}
+
+ul li {
+  padding: 12px 15px;
+  background-color: white;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  transition: transform 0.2s;
+}
+
+ul li:hover {
+  transform: translateX(5px);
+  background-color: #f8f9fa;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  body {
+      flex-direction: column;
+  }
+  
+  aside {
+      width: 100%;
+      height: auto;
+      position: relative;
+      padding: 15px;
+  }
+  
+  .main-content {
+      margin-left: 0;
+      padding: 20px;
+  }
+}
