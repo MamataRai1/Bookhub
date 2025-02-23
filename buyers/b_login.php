@@ -1,6 +1,11 @@
 <?php
 session_start(); // ✅ Ensure session starts
 
+// Store the referring page URL if it exists
+if (isset($_SERVER['HTTP_REFERER'])) {
+    $_SESSION['return_url'] = $_SERVER['HTTP_REFERER'];
+}
+
 $conn = new mysqli('localhost', 'root', '', 'bookhub');
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -23,16 +28,24 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             $user = $result->fetch_assoc();
 
             if (password_verify($password, $user['password'])) {  
-                // ✅ Correct session variables
-                $_SESSION['b_loginid'] = $user['users_id']; 
-                $_SESSION['b_username'] = $user['username']; 
+                // Set ALL necessary session variables
+                $_SESSION['user_id'] = $user['users_id'];
+                $_SESSION['name'] = $user['username'];
+                $_SESSION['email'] = $user['email'];
+                
+                // Debug session
+                echo "<pre>";
+                print_r($_SESSION);
+                echo "</pre>";
 
-                //  // ... other login code ...
-                //    $_SESSION['user_id'] = $user['users_id']; // Change to user_id
-                //    $_SESSION['b_username'] = $user['username']; 
-// ... rest of your login code ...
-                // ✅ Redirect without printing anything
-                header("Location: b_dashboard.php");
+                // Redirect back to payment page if it exists
+                if (isset($_SESSION['return_url']) && strpos($_SESSION['return_url'], 'payment.php') !== false) {
+                    $redirect_url = $_SESSION['return_url'];
+                    unset($_SESSION['return_url']);
+                    header("Location: " . $redirect_url);
+                } else {
+                    header("Location: b_dashboard.php");
+                }
                 exit;
             } else {
                 $loginError = "Wrong password!";

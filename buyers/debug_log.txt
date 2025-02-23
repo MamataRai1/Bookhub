@@ -1,4 +1,3 @@
 Array
 (
-    [book_id] => 6
 )

@@ -56,7 +56,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($book['title']); ?> - BookHub</title>
     <link rel="stylesheet" href="bookd.css">
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
@@ -69,7 +69,7 @@ $conn->close();
         <div class="book-info">
             <h1><?php echo htmlspecialchars($book['title']); ?></h1>
             <p class="author">by <?php echo htmlspecialchars($book['author']); ?></p>
-            <p class="shop-name"><strong>Shop:</strong> <?php echo htmlspecialchars($book['store_name']); ?></p> <!-- Store Name Added -->
+            <p class="shop-name">Sold by: <?php echo htmlspecialchars($book['store_name']); ?></p>
             <p class="price">Rs. <?php echo htmlspecialchars($book['price']); ?></p>
 
             <div class="ratings">
@@ -90,7 +90,7 @@ $conn->close();
 
             <p class="description"><?php echo nl2br(htmlspecialchars($book['description'])); ?></p>
             <div class="buttons">
-                <button onclick="window.location.href='../payment/payment.php?book_id=<?php echo $book['book_id']; ?>'" class="buy-btn">Buy Now</button>
+                <button onclick="showOrderDetails(<?php echo $book['book_id']; ?>, <?php echo $book['price']; ?>, '<?php echo htmlspecialchars($book['title']); ?>')" class="buy-btn">Buy Now</button>
                 <button onclick="window.location.href='../buyers/add_to_cart.php?book_id=<?php echo $book['book_id']; ?>' " class="cart-btn">Add to Cart</button>
 
             </div>
@@ -100,13 +100,16 @@ $conn->close();
     <!-- Reviews Section -->
     <div class="reviews-section">
         <h2>Reviews</h2>
-        <?php while ($review = $reviews->fetch_assoc()): ?>
-            <div class="review">
-                <p><strong><?php echo htmlspecialchars($review['username']); ?>:</strong> <?php echo htmlspecialchars($review['comment']); ?></p>
-
-
-            </div>
-        <?php endwhile; ?>
+        <?php if ($reviews->num_rows > 0): ?>
+            <?php while ($review = $reviews->fetch_assoc()): ?>
+                <div class="review">
+                    <p><strong><?php echo htmlspecialchars($review['username']); ?></strong></p>
+                    <p><?php echo htmlspecialchars($review['comment']); ?></p>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <p>No reviews yet.</p>
+        <?php endif; ?>
     </div>
 
     <!-- Login Form Popup (Buyer's Login) -->
@@ -117,27 +120,62 @@ $conn->close();
         </div>
     </div>
 
+    <!-- Add this simplified Order Details Popup -->
+    <div id="orderDetailsPopup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closeOrderDetails()">&times;</span>
+            <h2>Order Details</h2>
+            
+            <div class="order-summary">
+                <div class="price-breakdown">
+                    <p>Book Price: <span id="bookPrice">Rs. 0</span></p>
+                    <p>Delivery Fee: <span>Rs. 125</span></p>
+                    <hr>
+                    <p class="total">Total Amount: <span id="totalPrice">Rs. 0</span></p>
+                    <p class="tax-note">All taxes included</p>
+                </div>
+                <button onclick="confirmOrder()" class="proceed-btn">Proceed to Pay</button>
+            </div>
+        </div>
+    </div>
+
     <!-- JavaScript for Popup -->
     <script>
-        function buyNow(bookId) {
-            if (!bookId) {
-                alert("Invalid Book ID");
-                return;
-            }
-            window.open(`../payment/payment.php?id=${bookId}`, '_blank');
-        }
+    let currentBookId, currentPrice;
 
-        function showBuyerLogin() {
-            document.body.classList.add("popup-open"); // Stop background scroll
-            document.getElementById("loginpopup").style.display = "flex";
-        }
+    function showOrderDetails(bookId, price, title) {
+        currentBookId = bookId;
+        currentPrice = price;
+        
+        document.getElementById('bookPrice').textContent = 'Rs. ' + price;
+        document.getElementById('totalPrice').textContent = 'Rs. ' + (price + 125); // Adding delivery charge
+        
+        document.body.classList.add("popup-open");
+        document.getElementById("orderDetailsPopup").style.display = "flex";
+    }
 
-        function closeBuyerLogin() {
-            document.body.classList.remove("popup-open"); // Restore scroll
-            document.getElementById("loginpopup").style.display = "none";
-        }
+    function closeOrderDetails() {
+        document.body.classList.remove("popup-open");
+        document.getElementById("orderDetailsPopup").style.display = "none";
+    }
+
+    function confirmOrder() {
+        const totalPrice = currentPrice + 125; // Adding delivery charge
+        window.location.href = `../payment/payment.php?book_id=${currentBookId}&total=${totalPrice}`;
+    }
+
+    function showBuyerLogin() {
+        document.body.classList.add("popup-open");
+        document.getElementById("loginpopup").style.display = "flex";
+    }
+
+    function closeBuyerLogin() {
+        document.body.classList.remove("popup-open");
+        document.getElementById("loginpopup").style.display = "none";
+    }
     </script>
 
+    
 </body>
 
 </html>

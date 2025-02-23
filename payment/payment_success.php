@@ -1,4 +1,18 @@
-<?php if (!isset($_GET['purchase_order_id'], $_GET['amount'], $_GET['purchase_order_name'], $_GET['status'], $_GET['transaction_id'])) {
+<?php
+session_start(); 
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "bookhub";
+
+$conn = new mysqli($servername, $username, $password, $database);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+if (!isset($_GET['purchase_order_id'], $_GET['amount'], $_GET['purchase_order_name'], $_GET['status'], $_GET['transaction_id'])) {
     die("Invalid Payment Details.");
 }
 
@@ -9,6 +23,17 @@ $book_title = htmlspecialchars($_GET['purchase_order_name']);
 $status = htmlspecialchars($_GET['status']);
 $transaction_id = htmlspecialchars($_GET['transaction_id']);
 $mobile = isset($_GET['mobile']) ? htmlspecialchars($_GET['mobile']) : 'N/A';
+
+// Update order status in database if payment is completed
+if ($status === 'Completed') {
+    // Extract the numeric order ID from "Order_X" format
+    $numeric_order_id = str_replace('Order_', '', $order_id);
+    
+    $update_query = "UPDATE orders SET status = 'Delivered' WHERE order_id = ?";
+    $stmt = $conn->prepare($update_query);
+    $stmt->bind_param("i", $numeric_order_id);
+    $stmt->execute();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -129,6 +154,15 @@ $mobile = isset($_GET['mobile']) ? htmlspecialchars($_GET['mobile']) : 'N/A';
             <button onclick="window.print()" class="btn btn-print">Print Receipt</button>
         </div>
     </div>
+
+    <?php if ($status === 'Completed'): ?>
+    <script>
+        // Show success message
+        setTimeout(function() {
+            alert('Payment successful! Your order has been confirmed.');
+        }, 1000);
+    </script>
+    <?php endif; ?>
 </body>
 
 </html>
