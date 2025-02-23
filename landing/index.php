@@ -54,7 +54,7 @@ $result = $conn->query($query);
 
             <form action="add_to_cart.php" method="POST">
                <input type="hidden" name="book_id" value="BOOK_ID_HERE">
-                <a href="cart.php" class="fas fa-cart-shopping"></a>
+                <a href="../cartcart.php" class="fas fa-cart-shopping"></a>
            </form>
 
 
@@ -107,7 +107,9 @@ $result = $conn->query($query);
                     <p class="price"><b>Rs.<?php echo $row['price']; ?></b></p>
                     <div class="icons">
                         <a href="#" class="fas fa-heart"></a>
-                        <a href="#" class="fas fa-cart-shopping"></a>
+                        <button onclick="addToCart(<?php echo $row['book_id']; ?>)" class="add-to-cart-btn">
+                            Add to Cart
+                        </button>
                         <a href="book_details.php?id=<?php echo $row['book_id']; ?>" class="fa-solid fa-eye"></a>
                     </div>
                 </div>
@@ -230,6 +232,34 @@ document.getElementById('searchBtn').addEventListener('click', function () {
                 document.getElementById("seconds").innerHTML = seconds;
             }
         }, 1000);
+
+function addToCart(bookId) {
+    fetch('../cart/add_to_cart.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'book_id=' + bookId
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            // Optionally refresh the page or update cart count
+            // location.reload();
+        } else {
+            if (data.message === 'Please login first') {
+                window.location.href = '../buyers/b_login.php';
+            } else {
+                alert(data.message);
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while adding to cart');
+    });
+}
     </script>
 </body>
 

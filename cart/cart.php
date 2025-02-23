@@ -1,6 +1,16 @@
 <?php
 session_start();
-include('../config/db_connect.php');
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "bookhub";
+
+$conn = new mysqli($servername, $username, $password, $database);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../buyers/b_login.php");
@@ -18,13 +28,12 @@ $result = $stmt->get_result();
 $buyer = $result->fetch_assoc();
 $buyer_id = $buyer['buyer_id'];
 
-// Get cart items with book details including image
+// Get cart items with book details
 $cart_query = "SELECT c.cart_id, c.quantity, c.added_at, 
-               b.book_id, b.title, b.price, b.image, b.author, b.description 
+               b.book_id, b.title, b.price, b.author, b.image
                FROM cart c 
-               JOIN book b ON c.book_id = b.book_id 
-               WHERE c.buyer_id = ? 
-               ORDER BY c.added_at DESC";
+               INNER JOIN book b ON c.book_id = b.book_id 
+               WHERE c.buyer_id = ?";
 $stmt = $conn->prepare($cart_query);
 $stmt->bind_param("i", $buyer_id);
 $stmt->execute();
@@ -154,17 +163,22 @@ $total = 0;
                 $total += $subtotal;
             ?>
                 <div class="cart-item" id="cart-item-<?php echo $item['cart_id']; ?>">
-                    <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>">
+                    <img src="../uploads/books/<?php echo htmlspecialchars($item['image']); ?>" 
+                         alt="<?php echo htmlspecialchars($item['title']); ?>"
+                         onerror="this.src='../assets/images/default-book.jpg'"
+                         style="width: 120px; height: 180px; object-fit: cover;">
                     <div class="item-details">
                         <h3><?php echo htmlspecialchars($item['title']); ?></h3>
-                        <p class="author">By <?php echo htmlspecialchars($item['author']); ?></p>
-                        <p class="price">Rs. <?php echo number_format($item['price'], 2); ?></p>
+                        <p>By <?php echo htmlspecialchars($item['author']); ?></p>
+                        <p>Price: Rs. <?php echo number_format($item['price'], 2); ?></p>
                         <div class="quantity-controls">
                             <button class="quantity-btn" onclick="updateQuantity(<?php echo $item['cart_id']; ?>, 'decrease')">-</button>
                             <span id="quantity-<?php echo $item['cart_id']; ?>"><?php echo $item['quantity']; ?></span>
                             <button class="quantity-btn" onclick="updateQuantity(<?php echo $item['cart_id']; ?>, 'increase')">+</button>
                         </div>
-                        <p>Subtotal: Rs. <span id="subtotal-<?php echo $item['cart_id']; ?>"><?php echo number_format($subtotal, 2); ?></span></p>
+                        <p>Subtotal: Rs. <span id="subtotal-<?php echo $item['cart_id']; ?>">
+                            <?php echo number_format($item['price'] * $item['quantity'], 2); ?>
+                        </span></p>
                         <p class="added-time">Added on: <?php echo date('M d, Y H:i', strtotime($item['added_at'])); ?></p>
                     </div>
                     <i class="fas fa-trash remove-btn" onclick="removeItem(<?php echo $item['cart_id']; ?>)"></i>

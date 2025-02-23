@@ -1,6 +1,16 @@
 <?php
 session_start();
-include('../config/db_connect.php');
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "bookhub";
+
+$conn = new mysqli($servername, $username, $password, $database);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['status' => 'error', 'message' => 'Please login first']);
@@ -11,7 +21,10 @@ if (isset($_POST['book_id'])) {
     $book_id = $_POST['book_id'];
     $user_id = $_SESSION['user_id'];
 
-    // Get buyer_id from users_id
+    // Debug output
+    error_log("Adding book_id: " . $book_id . " for user_id: " . $user_id);
+
+    // Get buyer_id from user_id
     $buyer_query = "SELECT buyer_id FROM buyers WHERE user_id = ?";
     $stmt = $conn->prepare($buyer_query);
     $stmt->bind_param("i", $user_id);
@@ -22,7 +35,7 @@ if (isset($_POST['book_id'])) {
         $buyer = $result->fetch_assoc();
         $buyer_id = $buyer['buyer_id'];
 
-        // Check if the book already exists in cart
+        // Check if book already exists in cart
         $check_query = "SELECT * FROM cart WHERE buyer_id = ? AND book_id = ?";
         $stmt = $conn->prepare($check_query);
         $stmt->bind_param("ii", $buyer_id, $book_id);
@@ -31,7 +44,7 @@ if (isset($_POST['book_id'])) {
 
         if ($result->num_rows > 0) {
             // Update quantity if book exists
-            $update_query = "UPDATE cart SET quantity = quantity + 1, added_at = CURRENT_TIMESTAMP WHERE buyer_id = ? AND book_id = ?";
+            $update_query = "UPDATE cart SET quantity = quantity + 1 WHERE buyer_id = ? AND book_id = ?";
             $stmt = $conn->prepare($update_query);
             $stmt->bind_param("ii", $buyer_id, $book_id);
         } else {
@@ -42,12 +55,20 @@ if (isset($_POST['book_id'])) {
         }
 
         if ($stmt->execute()) {
-            echo json_encode(['status' => 'success', 'message' => 'Book added to cart!']);
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Book added to cart successfully!'
+            ]);
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Error adding to cart']);
+            echo json_encode([
+                'status' => 'error',
+                'message' => 'Error adding to cart: ' . $conn->error
+            ]);
         }
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Buyer not found']);
     }
+} else {
+    echo json_encode(['status' => 'error', 'message' => 'Book ID not provided']);
 }
 ?>

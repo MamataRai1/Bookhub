@@ -91,8 +91,9 @@ $conn->close();
             <p class="description"><?php echo nl2br(htmlspecialchars($book['description'])); ?></p>
             <div class="buttons">
                 <button onclick="showOrderDetails(<?php echo $book['book_id']; ?>, <?php echo $book['price']; ?>, '<?php echo htmlspecialchars($book['title']); ?>')" class="buy-btn">Buy Now</button>
-                <button onclick="window.location.href='../cart/add_to_cart.php?book_id=<?php echo $book['book_id']; ?>' " class="cart-btn">Add to Cart</button>
-
+                <button class="add-to-cart-btn" onclick="addToCart(<?php echo $book['book_id']; ?>)">
+                    <i class="fas fa-shopping-cart"></i> Add to Cart
+                </button>
             </div>
         </div>
     </div>
@@ -172,6 +173,36 @@ $conn->close();
     function closeBuyerLogin() {
         document.body.classList.remove("popup-open");
         document.getElementById("loginpopup").style.display = "none";
+    }
+
+    function addToCart(bookId) {
+        fetch('../cart/add_to_cart.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'book_id=' + bookId
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert(data.message);
+                // Update cart count in navbar if you have one
+                if (document.querySelector('.cart-count')) {
+                    document.querySelector('.cart-count').textContent = data.cart_count;
+                }
+            } else {
+                if (data.message === 'Please login first') {
+                    window.location.href = '../buyers/b_login.php';
+                } else {
+                    alert(data.message);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while adding to cart');
+        });
     }
     </script>
 

@@ -71,7 +71,7 @@ if (isset($_SESSION['buyer_id'])) {
 
             <form action="cart.php" method="POST">
                <input type="hidden" name="book_id" value="BOOK_ID_HERE ">
-                <a href="cart.php" class="fas fa-cart-shopping"></a>
+                <a href="../cart/cart.php" class="fas fa-cart-shopping"></a>
            </form>
 
 

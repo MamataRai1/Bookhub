@@ -5,22 +5,62 @@ $conn = new mysqli('localhost', 'root', '', 'bookhub');
 // Start session
 session_start();
 
-if (!isset($_SESSION['b_loginid'])) {
-    echo "You need to log in to view your profile.";
+// Debug session
+error_log("Session contents: " . print_r($_SESSION, true));
+
+// Check for either session variable
+if (!isset($_SESSION['user_id']) && !isset($_SESSION['b_loginid'])) {
+    header("Location: b_login.php");
     exit;
 }
 
-$user_id = $_SESSION['b_loginid'];
+// Get the user ID from whichever session variable is set
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : $_SESSION['b_loginid'];
 
 // Fetch user details
-$user_query = "SELECT fname, lname, email, phone, address FROM buyers WHERE user_id = '$user_id'";
-$user_result = $conn->query($user_query);
+$user_query = "SELECT b.fname, b.lname, b.email, b.phone, b.address, b.buyer_id 
+               FROM buyers b 
+               WHERE b.user_id = ?";
+$stmt = $conn->prepare($user_query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$user_result = $stmt->get_result();
+
+if ($user_result->num_rows === 0) {
+    echo "User not found.";
+    exit;
+}
+
 $user = $user_result->fetch_assoc();
+$buyer_id = $user['buyer_id'];
 
-// Query to fetch recent orders
-$order_query = "SELECT order_id, order_date, total_amount, status FROM orders WHERE buyer_id = '$user_id' ORDER BY order_date DESC LIMIT 5";
-$order_result = $conn->query($order_query);
+// Query to fetch cart items
+$cart_query = "SELECT c.cart_id, c.quantity, c.added_at,
+               b.title, b.price, b.image
+               FROM cart c
+               JOIN book b ON c.book_id = b.book_id
+               WHERE c.buyer_id = ?";
+$stmt = $conn->prepare($cart_query);
+$stmt->bind_param("i", $buyer_id);
+$stmt->execute();
+$cart_result = $stmt->get_result();
 
+// Update the order query to match your table structure
+$order_query = "SELECT o.order_id, o.order_date, o.total_amount, o.status, o.shipping_address,
+                oi.quantity, oi.price as item_price,
+                b.title, b.image
+                FROM orders o
+                JOIN order_items oi ON o.order_id = oi.order_id
+                JOIN book b ON oi.b_id = b.book_id
+                WHERE o.buyer_id = ?
+                ORDER BY o.order_date DESC";
+$stmt = $conn->prepare($order_query);
+$stmt->bind_param("i", $buyer_id);
+$stmt->execute();
+$order_result = $stmt->get_result();
+
+// Add debug output
+echo "<!-- Debug: buyer_id = $buyer_id -->";
 ?>
 
 <!DOCTYPE html>
@@ -71,10 +111,10 @@ $order_result = $conn->query($order_query);
         .navbar .icons {
             display: flex;
             align-items: center;
+            gap: 10px;
         }
         .navbar .icons span {
             color: white;
-            margin-right: 10px;
         }
         .navbar .icons a,
         .navbar .icons button {
@@ -87,6 +127,11 @@ $order_result = $conn->query($order_query);
         }
         .navbar .icons .btn-logout {
             background: #dc3545;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
         }
         .navbar .icons .btn-logout:hover {
             background: #c82333;
@@ -145,13 +190,13 @@ $order_result = $conn->query($order_query);
         }
         .btn-edit {
             display: inline-block;
-            margin-top: 10px;
-            padding: 8px 15px;
+            padding: 5px 15px;
             background: #007bff;
-            color: #fff;
+            color: white;
             text-decoration: none;
             border-radius: 5px;
-            font-weight: bold;
+            margin-top: 10px;
+            font-size: 14px;
         }
         .btn-edit:hover {
             background: #0056b3;
@@ -186,6 +231,163 @@ $order_result = $conn->query($order_query);
         .inline-table .card {
             width: 48%;
         }
+
+        .cart-items, .orders {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .cart-item, .order-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            gap: 15px;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .cart-total {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f8f8;
+            border-radius: 5px;
+            text-align: right;
+        }
+
+        .order {
+            margin-bottom: 20px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .order-header {
+            background: #f8f8f8;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-items {
+            padding: 15px;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            gap: 15px;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-total {
+            background: #f8f8f8;
+            padding: 15px;
+            text-align: right;
+            border-top: 1px solid #eee;
+        }
+
+        .item-details h5 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .item-details p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .orders {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .order {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .order-header {
+            background: #f8f8f8;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .order-header h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+
+        .order-header p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .order-items {
+            padding: 15px;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            gap: 15px;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-item .item-details h5 {
+            margin: 0 0 8px 0;
+            color: #333;
+        }
+
+        .order-item .item-details p {
+            margin: 4px 0;
+            color: #666;
+        }
+
+        .status-pending {
+            color: #ffa500;
+            background: #fff3e0;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .status-shipped {
+            color: #2196f3;
+            background: #e3f2fd;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .status-delivered {
+            color: #4caf50;
+            background: #e8f5e9;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .status-cancelled {
+            color: #f44336;
+            background: #ffebee;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -203,13 +405,8 @@ $order_result = $conn->query($order_query);
             </ul>
         </div>
         <div class="icons">
-            <?php if (isset($_SESSION['b_loginid'])): ?>
-                <span>Hello, <?php echo htmlspecialchars($user['fname']); ?>!</span>
-                <a href="/BOOKHUB/logout.php" class="btn-logout">Logout</a>
-            <?php else: ?>
-                <button><i class="fa-solid fa-user"></i> <a href="/BOOKHUB/buyers/b_login.php">LOG IN</a></button>
-                <button><a href="/BOOKHUB/buyers/b_signup.php">SIGN UP</a></button>
-            <?php endif; ?>
+            <span>Hello, <?php echo htmlspecialchars($user['fname']); ?>!</span>
+            <a href="logout.php" class="btn-logout">Logout</a>
         </div>
     </nav>
 
@@ -232,38 +429,92 @@ $order_result = $conn->query($order_query);
                     <p><strong>Name:</strong> <?php echo htmlspecialchars($user['fname'] . ' ' . $user['lname']); ?></p>
                     <p><strong>Email:</strong> <?php echo htmlspecialchars($user['email']); ?></p>
                     <p><strong>Phone:</strong> <?php echo htmlspecialchars($user['phone']); ?></p>
+                    <a href="#" class="btn-edit">Edit Profile</a>
                 </div>
 
                 <!-- Address Book Section -->
                 <div class="card">
                     <h3>Address Book</h3>
-                    <p><strong>Address:</strong></p>
+                    <p><strong>Delivery Address:</strong></p>
                     <p><?php echo htmlspecialchars($user['address']); ?></p>
+                    <a href="#" class="btn-edit">Edit Address</a>
                 </div>
             </div>
 
-            <!-- Recent Orders Section -->
+            <!-- Current Cart Section -->
             <div class="card">
-                <h3>Recent Orders</h3>
-                <?php if ($order_result->num_rows > 0): ?>
-                    <table>
-                        <tr>
-                            <th>Order #</th>
-                            <th>Date</th>
-                            <th>Total</th>
-                            <th>Action</th>
-                        </tr>
-                        <?php while ($order = $order_result->fetch_assoc()): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($order['order_id']); ?></td>
-                                <td><?php echo htmlspecialchars($order['order_date']); ?></td>
-                                <td>Rs. <?php echo htmlspecialchars($order['total_amount']); ?></td>
-                                <td><a href="#" class="btn-edit">Manage</a></td>
-                            </tr>
+                <h3>Current Cart Items</h3>
+                <?php if ($cart_result && $cart_result->num_rows > 0): ?>
+                    <div class="cart-items">
+                        <?php 
+                        $cart_total = 0;
+                        while ($cart_item = $cart_result->fetch_assoc()): 
+                            $subtotal = $cart_item['price'] * $cart_item['quantity'];
+                            $cart_total += $subtotal;
+                        ?>
+                            <div class="cart-item">
+                                <img src="../assets/images/<?php echo htmlspecialchars($cart_item['image']); ?>" 
+                                     alt="Book Cover"
+                                     style="width: 60px; height: 90px; object-fit: cover;">
+                                <div class="item-details">
+                                    <h4><?php echo htmlspecialchars($cart_item['title']); ?></h4>
+                                    <p>Quantity: <?php echo $cart_item['quantity']; ?></p>
+                                    <p>Price: Rs. <?php echo number_format($cart_item['price'], 2); ?></p>
+                                    <p>Subtotal: Rs. <?php echo number_format($subtotal, 2); ?></p>
+                                </div>
+                            </div>
                         <?php endwhile; ?>
-                    </table>
+                        <div class="cart-total">
+                            <h4>Total: Rs. <?php echo number_format($cart_total, 2); ?></h4>
+                            <a href="../cart/cart.php" class="btn-edit">View Cart</a>
+                        </div>
+                    </div>
                 <?php else: ?>
-                    <p>No recent orders found.</p>
+                    <p>Your cart is empty.</p>
+                <?php endif; ?>
+            </div>
+
+            <!-- Updated Purchase History Section -->
+            <div class="card">
+                <h3>Purchase History</h3>
+                <?php 
+                // Debug output
+                if ($order_result) {
+                    echo "<!-- Debug: Number of orders found: " . $order_result->num_rows . " -->";
+                }
+                
+                if ($order_result && $order_result->num_rows > 0): ?>
+                    <div class="orders">
+                        <?php while ($order = $order_result->fetch_assoc()): ?>
+                            <div class="order">
+                                <div class="order-header">
+                                    <h4>Order #<?php echo $order['order_id']; ?></h4>
+                                    <p>Date: <?php echo date('M d, Y h:i A', strtotime($order['order_date'])); ?></p>
+                                    <p>Status: <span class="status-<?php echo strtolower($order['status']); ?>">
+                                        <?php echo htmlspecialchars($order['status']); ?>
+                                    </span></p>
+                                    <p>Total Amount: Rs. <?php echo number_format($order['total_amount'], 2); ?></p>
+                                    <p>Shipping Address: <?php echo htmlspecialchars($order['shipping_address']); ?></p>
+                                </div>
+                                <div class="order-items">
+                                    <div class="order-item">
+                                        <img src="../book/<?php echo htmlspecialchars($order['image']); ?>" 
+                                             alt="<?php echo htmlspecialchars($order['title']); ?>"
+                                             onerror="this.src='../assets/images/default-book.jpg'"
+                                             style="width: 80px; height: 120px; object-fit: cover;">
+                                        <div class="item-details">
+                                            <h5><?php echo htmlspecialchars($order['title']); ?></h5>
+                                            <p>Quantity: <?php echo $order['quantity']; ?></p>
+                                            <p>Price: Rs. <?php echo number_format($order['item_price'], 2); ?></p>
+                                            <p>Subtotal: Rs. <?php echo number_format($order['item_price'] * $order['quantity'], 2); ?></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endwhile; ?>
+                    </div>
+                <?php else: ?>
+                    <p>No purchase history found.</p>
                 <?php endif; ?>
             </div>
         </div>
