@@ -33,7 +33,7 @@ if ($result->num_rows > 0) {
     die("Book not found.");
 }
 
-// echo "Processing payment for book ID: " . $book_id; // Debugging check
+ 
 
 
 // Khalti Payment Integration

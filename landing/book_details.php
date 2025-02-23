@@ -12,6 +12,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+
 // Check if 'id' is set in the URL
 if (isset($_GET['id'])) {
     $book_id = $_GET['id'];

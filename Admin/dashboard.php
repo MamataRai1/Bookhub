@@ -25,7 +25,7 @@ if ($conn->connect_error) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
   <style>
    
   </style>
@@ -52,7 +52,7 @@ if ($conn->connect_error) {
       <div class="profile-pic">
         <img src="profile.jpg" alt="Profile" width="40" height="40" style="border-radius: 50%;">
         <div class="profile-dropdown">
-          <a href="#profile-settings">Profile Settings</a>
+          <a href="#profile-settings">Admin</a>
           <a href="logout.php">Logout</a>
         </div>
       </div>
@@ -133,6 +133,7 @@ if ($conn->connect_error) {
   </div>
 
   <script>
+    
        const notifications = [
       "New order received",
       "Product review posted",
