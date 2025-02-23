@@ -91,7 +91,7 @@ $conn->close();
             <p class="description"><?php echo nl2br(htmlspecialchars($book['description'])); ?></p>
             <div class="buttons">
                 <button onclick="showOrderDetails(<?php echo $book['book_id']; ?>, <?php echo $book['price']; ?>, '<?php echo htmlspecialchars($book['title']); ?>')" class="buy-btn">Buy Now</button>
-                <button onclick="window.location.href='../buyers/add_to_cart.php?book_id=<?php echo $book['book_id']; ?>' " class="cart-btn">Add to Cart</button>
+                <button onclick="window.location.href='../cart/add_to_cart.php?book_id=<?php echo $book['book_id']; ?>' " class="cart-btn">Add to Cart</button>
 
             </div>
         </div>
