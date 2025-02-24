@@ -8,19 +8,13 @@ if (!isset($_SESSION['admin_id'])) {
     exit();
 }
 
-// Fetch all books with seller information
-$books_query = "SELECT b.*, f.email as seller_email, f.fname, f.lname 
+// Fetch all books with seller and store information
+$books_query = "SELECT b.*, f.fname, f.lname, s.store_name 
                 FROM book b 
                 LEFT JOIN form f ON b.seller_id = f.id 
+                LEFT JOIN store s ON b.store_id = s.store_id 
                 ORDER BY b.created_at DESC";
 $books = $conn->query($books_query);
-
-// Debug: Print the first book record
-if($books->num_rows > 0) {
-    $first_book = $books->fetch_assoc();
-    error_log("First book data: " . print_r($first_book, true));
-    $books->data_seek(0); // Reset pointer to start
-}
 ?>
 
 <!DOCTYPE html>
@@ -80,31 +74,17 @@ if($books->num_rows > 0) {
             border-radius: 4px;
             cursor: pointer;
             color: white;
-            margin: 0 2px;
+            text-decoration: none;
+            margin: 2px;
+            display: inline-block;
         }
 
-        .btn-approve {
-            background: #28a745;
-        }
+        .btn-approve { background: #28a745; }
+        .btn-reject { background: #dc3545; }
 
-        .btn-reject {
-            background: #dc3545;
-        }
-
-        .status-pending {
-            color: #ffc107;
-            font-weight: bold;
-        }
-
-        .status-approved {
-            color: #28a745;
-            font-weight: bold;
-        }
-
-        .status-rejected {
-            color: #dc3545;
-            font-weight: bold;
-        }
+        .status-pending { color: #ffc107; font-weight: bold; }
+        .status-approved { color: #28a745; font-weight: bold; }
+        .status-rejected { color: #dc3545; font-weight: bold; }
 
         .nav-link {
             display: block;
@@ -114,18 +94,10 @@ if($books->num_rows > 0) {
             margin: 5px 0;
         }
 
-        .nav-link:hover {
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
-        }
+        .nav-link:hover { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        .nav-link.active { background: rgba(255,255,255,0.2); }
 
-        .nav-link.active {
-            background: rgba(255,255,255,0.2);
-        }
-
-        h1 {
-            margin-bottom: 20px;
-        }
+        h1 { margin-bottom: 20px; }
 
         .search-box {
             padding: 10px;
@@ -146,6 +118,9 @@ if($books->num_rows > 0) {
             font-weight: bold;
             color: #28a745;
         }
+
+        .store-name { color: #0066cc; font-size: 0.9em; }
+        .seller-name { color: #666; font-size: 0.85em; }
     </style>
 </head>
 <body>
@@ -153,21 +128,11 @@ if($books->num_rows > 0) {
         <div class="sidebar">
             <h2>Admin Dashboard</h2>
             <nav>
-                <a href="a_dashboard.php" class="nav-link">
-                    <i class="fas fa-home"></i> Dashboard
-                </a>
-                <a href="manage_users.php" class="nav-link">
-                    <i class="fas fa-users"></i> Manage Users
-                </a>
-                <a href="manage_books.php" class="nav-link active">
-                    <i class="fas fa-book"></i> Manage Books
-                </a>
-                <a href="reports.php" class="nav-link">
-                    <i class="fas fa-chart-bar"></i> Reports
-                </a>
-                <a href="logout.php" class="nav-link">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
+                <a href="a_dashboard.php" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="manage_users.php" class="nav-link"><i class="fas fa-store"></i> Book Stores</a>
+                <a href="manage_books.php" class="nav-link active"><i class="fas fa-book"></i> Manage Books</a>
+                <a href="reports.php" class="nav-link"><i class="fas fa-chart-bar"></i> Reports</a>
+                <a href="logout.php" class="nav-link"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </nav>
         </div>
 
@@ -180,10 +145,9 @@ if($books->num_rows > 0) {
                 <thead>
                     <tr>
                         <th>Image</th>
-                        <th>Title</th>
-                        <th>Author</th>
+                        <th>Book Details</th>
                         <th>Price</th>
-                        <th>Seller</th>
+                        <th>Seller Details</th>
                         <th>Status</th>
                         <th>Listed Date</th>
                         <th>Actions</th>
@@ -194,32 +158,31 @@ if($books->num_rows > 0) {
                         <tr>
                             <td>
                                 <?php 
-                                $image_path = "../assets/img/" . ($book['image'] ?? 'default-book.jpg');
+                                $image_path = "../assets/img/" . htmlspecialchars($book['image'] ?? 'default-book.jpg');
                                 echo "<img src='$image_path' alt='Book Cover' class='book-image'>";
                                 ?>
                             </td>
-                            <td><?php echo htmlspecialchars($book['title']); ?></td>
-                            <td><?php echo htmlspecialchars($book['author']); ?></td>
+                            <td>
+                                <strong><?php echo htmlspecialchars($book['title']); ?></strong><br>
+                                <span class="author">by <?php echo htmlspecialchars($book['author']); ?></span>
+                            </td>
                             <td class="price">₹<?php echo number_format($book['price'], 2); ?></td>
-                            <td><?php echo htmlspecialchars($book['fname'] . ' ' . $book['lname']); ?></td>
+                            <td>
+                                <div class="store-name">
+                                    Store: <?php echo htmlspecialchars($book['store_name'] ?? 'No Store'); ?>
+                                </div>
+                                <div class="seller-name">
+                                    Seller: <?php echo htmlspecialchars($book['fname'] . ' ' . $book['lname']); ?>
+                                </div>
+                            </td>
                             <td class="status-<?php echo strtolower($book['status'] ?? 'pending'); ?>">
-                                <?php echo ucfirst(strtolower($book['status'] ?? 'pending')); ?>
+                                <?php echo ucfirst($book['status'] ?? 'pending'); ?>
                             </td>
                             <td><?php echo date('d M Y', strtotime($book['created_at'])); ?></td>
                             <td>
                                 <?php if (($book['status'] ?? 'pending') == 'pending'): ?>
-                                    <form method="GET" action="update_book_status.php" style="display:inline;">
-                                        <!-- <input type="hidden" name="id" value="<?php echo $book['id']; ?>"> -->
-                                        <input type="hidden" name="status" value="approved">
-                                        <input type="submit" value="Approve" class="btn btn-approve" 
-                                               onclick="return confirm('Are you sure you want to approve this book?')">
-                                    </form>
-                                    <form method="GET" action="update_book_status.php" style="display:inline;">
-                                        <!-- <input type="hidden" name="id" value="<?php echo $book['id']; ?>"> -->
-                                        <input type="hidden" name="status" value="rejected">
-                                        <input type="submit" value="Reject" class="btn btn-reject" 
-                                               onclick="return confirm('Are you sure you want to reject this book?')">
-                                    </form>
+                                    <a href="process_book_status.php?id=<?php echo $book['book_id']; ?>&action=approve" class="btn btn-approve">Approve</a>
+                                    <a href="process_book_status.php?id=<?php echo $book['book_id']; ?>&action=reject" class="btn btn-reject">Reject</a>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -230,14 +193,19 @@ if($books->num_rows > 0) {
     </div>
 
     <script>
-    // Search functionality
     document.getElementById('searchInput').addEventListener('keyup', function() {
         let searchText = this.value.toLowerCase();
-        let rows = document.querySelectorAll('tbody tr');
-        
-        rows.forEach(row => {
-            let text = row.textContent.toLowerCase();
-            row.style.display = text.includes(searchText) ? '' : 'none';
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.style.display = row.textContent.toLowerCase().includes(searchText) ? '' : 'none';
+        });
+    });
+
+    document.querySelectorAll('.btn-approve, .btn-reject').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const action = this.classList.contains('btn-approve') ? 'approve' : 'reject';
+            if (!confirm(`Are you sure you want to ${action} this book?`)) {
+                e.preventDefault();
+            }
         });
     });
     </script>
