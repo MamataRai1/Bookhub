@@ -1,50 +1,31 @@
 <?php
+// Start a new session or resume existing
 session_start();
-$conn = new mysqli('localhost', 'root', '', 'bookhub');
 
-// Check for connection errors
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (isset($_SESSION['seller_id']) && !isset($_GET['error'])) {
+    header("Location: s_dashboard.php");
+    exit();
 }
 
-$error = '';
-
-// Debug POST data
-error_log("POST data: " . print_r($_POST, true));
-error_log("Request Method: " . $_SERVER['REQUEST_METHOD']);
-
-if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    // Debug
-    error_log("Login attempt with: $email");
-
-    $stmt = $conn->prepare("SELECT * FROM form WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        
-        // For now, use direct comparison
-        if ($password == $user['password']) {
-            // Set both session variables
-            $_SESSION['seller_id'] = $user['id'];
-            $_SESSION['email'] = $user['email'];
-            
-            error_log("Login successful. Session: " . print_r($_SESSION, true));
-            
-            // Redirect with exit
-            header("Location: s_dashboard.php");
-            exit();
-        } else {
-            $error = "Incorrect password";
-            error_log("Password mismatch. Input: $password, Stored: {$user['password']}");
-        }
-    } else {
-        $error = "No user found with this email";
+// Simple error message handling
+$error_message = '';
+if (isset($_GET['error'])) {
+    switch($_GET['error']) {
+        case 'invalid_session':
+            session_destroy(); // Destroy any existing session
+            $error_message = 'Please login to continue.';
+            break;
+        case 'invalid_credentials':
+            $error_message = 'Invalid email or password.';
+            break;
+        case 'empty_fields':
+            $error_message = 'Please fill in all fields.';
+            break;
+        case 'account_pending':
+            $error_message = 'Your account is pending approval.';
+            break;
+        default:
+            $error_message = 'An error occurred. Please try again.';
     }
 }
 ?>
@@ -54,114 +35,125 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Login</title>
+    <title>Seller Login - BookHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
         }
 
-        .login {
+        .login-container {
             background: white;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             width: 100%;
             max-width: 400px;
         }
 
         h1 {
             text-align: center;
-            color: #333;
-            margin-bottom: 30px;
+            color: #0000FF;
+            margin-bottom: 20px;
         }
 
-        .error-message {
-            color: red;
-            text-align: center;
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #ffe6e6;
-            border-radius: 4px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
+        .form-group {
+            margin-bottom: 20px;
         }
 
         label {
+            display: block;
             margin-bottom: 5px;
             color: #666;
         }
 
-        input[type="email"],
-        input[type="password"] {
-            padding: 10px;
-            margin-bottom: 20px;
+        input {
+            width: 100%;
+            padding: 8px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-size: 16px;
         }
 
-        input[type="submit"] {
-            padding: 12px;
+        button {
+            width: 100%;
+            padding: 10px;
             background: #0000FF;
             color: white;
             border: none;
             border-radius: 4px;
-            cursor: pointer;
             font-size: 16px;
+            cursor: pointer;
         }
 
-        input[type="submit"]:hover {
+        button:hover {
             background: #0000CC;
         }
 
-        p {
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .links {
             text-align: center;
             margin-top: 20px;
         }
 
-        a {
+        .links a {
             color: #0000FF;
             text-decoration: none;
+            margin: 0 10px;
         }
 
-        a:hover {
+        .links a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="login">
+    <div class="login-container">
         <h1>Seller Login</h1>
         
-        <?php if (!empty($error)): ?>
+        <?php if ($error_message): ?>
             <div class="error-message">
-                <?php echo htmlspecialchars($error); ?>
+                <?php echo htmlspecialchars($error_message); ?>
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="">
-            <label>Email</label>
-            <input type="email" name="email" required 
-                   value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
-            <label>Password</label>
-            <input type="password" name="password" required>
-            <input type="submit" value="Login">
-        </form>
-        <p>Don't have an account? <a href="s_signup.php">Sign Up here</a></p>
-    </div>
+        <form action="process_login.php" method="POST">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
 
-    <?php
-    // Debug current session
-    error_log("Current session at end of page: " . print_r($_SESSION, true));
-    ?>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <div class="links">
+            <a href="s_signup.php">Register as Seller</a>
+            <a href="../landing/index.php">Back to Home</a>
+        </div>
+    </div>
 </body>
 </html>

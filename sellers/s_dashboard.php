@@ -1,67 +1,37 @@
 <?php
 session_start();
-error_log("Dashboard Session: " . print_r($_SESSION, true));
 
-// Database connection
-$server = "localhost";
-$username = "root";
-$password = "";
-$database = "bookhub";
+// Basic session check
+if (!isset($_SESSION['seller_id'])) {
+    header("Location: s_login.php?error=invalid_session");
+    exit();
+}
 
-$conn = mysqli_connect($server, $username, $password, $database);
+$conn = new mysqli('localhost', 'root', '', 'bookhub');
 
-// Get seller details
-$seller_id = $_SESSION['seller_id'];
-error_log("Seller ID from session: " . $seller_id);
-
-// Fetch seller's books
-$books_query = "SELECT * FROM book WHERE seller_id = ?";
-$stmt = $conn->prepare($books_query);
-$stmt->bind_param("i", $seller_id);
-$stmt->execute();
-$books = $stmt->get_result();
-
-// Fetch seller details
-$seller_query = "SELECT * FROM sellers WHERE seller_id = ?";
-$stmt = $conn->prepare($seller_query);
-$stmt->bind_param("i", $seller_id);
+// Verify seller exists and is approved
+$stmt = $conn->prepare("SELECT f.*, s.store_name 
+                       FROM form f 
+                       LEFT JOIN store s ON f.id = s.store_id 
+                       WHERE f.id = ? AND f.status = 'approved'");
+$stmt->bind_param("i", $_SESSION['seller_id']);
 $stmt->execute();
 $result = $stmt->get_result();
 
-if ($result->num_rows === 0) {
-    error_log("No seller found with ID: " . $seller_id);
+if ($result->num_rows !== 1) {
+    session_unset();
     session_destroy();
     header("Location: s_login.php?error=invalid_session");
-    exit;
+    exit();
 }
 
 $seller = $result->fetch_assoc();
-$seller_data = json_decode($seller['seller_data'], true);
 
-// Fetch total earnings
-$earnings_query = "SELECT SUM(oi.price * oi.quantity) as total_earnings 
-                  FROM order_items oi 
-                  JOIN book b ON oi.b_id = b.book_id 
-                  WHERE b.seller_id = ?";
-$stmt = $conn->prepare($earnings_query);
-$stmt->bind_param("i", $seller_id);
-$stmt->execute();
-$earnings = $stmt->get_result()->fetch_assoc();
-
-// Fetch recent orders
-$orders_query = "SELECT o.order_id, o.order_date, o.status,
-                 oi.quantity, oi.price,
-                 b.title
-                 FROM orders o
-                 JOIN order_items oi ON o.order_id = oi.order_id
-                 JOIN book b ON oi.b_id = b.book_id
-                 WHERE b.seller_id = ?
-                 ORDER BY o.order_date DESC
-                 LIMIT 5";
-$stmt = $conn->prepare($orders_query);
-$stmt->bind_param("i", $seller_id);
-$stmt->execute();
-$recent_orders = $stmt->get_result();
+// Get total books count
+$books_query = $conn->prepare("SELECT COUNT(*) as total FROM book WHERE seller_id = ?");
+$books_query->bind_param("i", $_SESSION['seller_id']);
+$books_query->execute();
+$total_books = $books_query->get_result()->fetch_assoc()['total'];
 ?>
 
 <!DOCTYPE html>
@@ -69,7 +39,7 @@ $recent_orders = $stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Dashboard</title>
+    <title>Seller Dashboard - BookHub</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
@@ -97,32 +67,19 @@ $recent_orders = $stmt->get_result();
             background: #f4f4f4;
         }
 
-        .sidebar h2 {
-            margin-bottom: 30px;
+        .welcome-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .nav-link {
-            display: block;
-            padding: 10px;
-            color: white;
-            text-decoration: none;
-            margin: 5px 0;
-            border-radius: 5px;
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-link.active {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .dashboard-stats {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .stat-card {
@@ -132,73 +89,25 @@ $recent_orders = $stmt->get_result();
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .books-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .book-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .book-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 8px 15px;
-            border-radius: 5px;
+        .nav-link {
+            display: block;
+            padding: 10px;
+            color: white;
             text-decoration: none;
-            cursor: pointer;
-            border: none;
-            font-size: 14px;
+            margin: 5px 0;
+            border-radius: 4px;
         }
 
-        .btn-primary {
-            background: #0000FF;
-            color: white;
+        .nav-link:hover {
+            background: rgba(255,255,255,0.1);
         }
 
-        .btn-danger {
-            background: #dc3545;
-            color: white;
+        .nav-link.active {
+            background: rgba(255,255,255,0.2);
         }
 
-        .btn-edit {
-            background: #28a745;
-            color: white;
-        }
-
-        .recent-orders {
-            margin-top: 30px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        th, td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        th {
-            background: #f8f9fa;
+        .nav-link i {
+            margin-right: 10px;
         }
     </style>
 </head>
@@ -207,102 +116,50 @@ $recent_orders = $stmt->get_result();
         <div class="sidebar">
             <h2>Seller Dashboard</h2>
             <nav>
-                <a href="#" class="nav-link active">Dashboard</a>
-                <a href="add_book.php" class="nav-link">Add New Book</a>
-                <a href="profile.php" class="nav-link">Profile</a>
-                <a href="logout.php" class="nav-link">Logout</a>
+                <a href="s_dashboard.php" class="nav-link active">
+                    <i class="fas fa-home"></i> Dashboard
+                </a>
+                <a href="manage_books.php" class="nav-link">
+                    <i class="fas fa-book"></i> Manage Books
+                </a>
+                <a href="add_book.php" class="nav-link">
+                    <i class="fas fa-plus"></i> Add New Book
+                </a>
+                <a href="store_settings.php" class="nav-link">
+                    <i class="fas fa-store"></i> Store Settings
+                </a>
+                <a href="profile.php" class="nav-link">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+                <a href="logout.php" class="nav-link">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
             </nav>
         </div>
 
         <div class="main-content">
-            <h1>Welcome, <?php echo htmlspecialchars($_SESSION['email']); ?>!</h1>
-            
-            <div class="dashboard-stats">
+            <div class="welcome-section">
+                <h1>Welcome, <?php echo htmlspecialchars($seller['fname'] . ' ' . $seller['lname']); ?>!</h1>
+                <p>Store: <?php echo htmlspecialchars($seller['store_name'] ?? 'No Store Name Set'); ?></p>
+            </div>
+
+            <div class="stats-grid">
                 <div class="stat-card">
                     <h3>Total Books</h3>
-                    <p><?php echo $books->num_rows; ?></p>
+                    <p class="number"><?php echo $total_books; ?></p>
                 </div>
                 <div class="stat-card">
-                    <h3>Total Earnings</h3>
-                    <p>Rs. <?php echo number_format($earnings['total_earnings'] ?? 0, 2); ?></p>
+                    <h3>Store Status</h3>
+                    <p class="status"><?php echo ucfirst($seller['status']); ?></p>
+                </div>
+                <div class="stat-card">
+                    <h3>Quick Actions</h3>
+                    <a href="add_book.php" class="btn">Add New Book</a>
                 </div>
             </div>
 
-            <div class="books-section">
-                <div class="header">
-                    <h2>Your Books</h2>
-                    <a href="add_book.php" class="btn btn-primary">Add New Book</a>
-                </div>
-
-                <div class="books-grid">
-                    <?php while ($book = $books->fetch_assoc()): ?>
-                        <div class="book-card">
-                            <img src="../book/<?php echo htmlspecialchars($book['image']); ?>" 
-                                 alt="<?php echo htmlspecialchars($book['title']); ?>"
-                                 onerror="this.src='../assets/images/default-book.jpg'">
-                            <h3><?php echo htmlspecialchars($book['title']); ?></h3>
-                            <p>Rs. <?php echo number_format($book['price'], 2); ?></p>
-                            <div class="actions">
-                                <a href="edit_book.php?id=<?php echo $book['book_id']; ?>" 
-                                   class="btn btn-edit">Edit</a>
-                                <button onclick="deleteBook(<?php echo $book['book_id']; ?>)" 
-                                        class="btn btn-danger">Delete</button>
-                            </div>
-                        </div>
-                    <?php endwhile; ?>
-                </div>
-            </div>
-
-            <div class="recent-orders">
-                <h2>Recent Orders</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Book</th>
-                            <th>Quantity</th>
-                            <th>Amount</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php while ($order = $recent_orders->fetch_assoc()): ?>
-                            <tr>
-                                <td>#<?php echo $order['order_id']; ?></td>
-                                <td><?php echo htmlspecialchars($order['title']); ?></td>
-                                <td><?php echo $order['quantity']; ?></td>
-                                <td>Rs. <?php echo number_format($order['price'] * $order['quantity'], 2); ?></td>
-                                <td><?php echo date('M d, Y', strtotime($order['order_date'])); ?></td>
-                                <td><?php echo htmlspecialchars($order['status']); ?></td>
-                            </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-            </div>
+            <!-- Add more dashboard content here -->
         </div>
     </div>
-
-    <script>
-    function deleteBook(bookId) {
-        if (confirm('Are you sure you want to delete this book?')) {
-            fetch('delete_book.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'book_id=' + bookId
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Error deleting book');
-                }
-            });
-        }
-    }
-    </script>
 </body>
 </html>
