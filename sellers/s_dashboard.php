@@ -1,19 +1,23 @@
 <?php
 session_start();
 
-// Basic session check
+// Ensure session is set
 if (!isset($_SESSION['seller_id'])) {
     header("Location: s_login.php?error=invalid_session");
     exit();
 }
 
+// Database connection
 $conn = new mysqli('localhost', 'root', '', 'bookhub');
+if ($conn->connect_error) {
+    die("Database connection failed: " . $conn->connect_error);
+}
 
 // Verify seller exists and is approved
-$stmt = $conn->prepare("SELECT f.*, s.store_name 
-                       FROM form f 
-                       LEFT JOIN store s ON f.id = s.store_id 
-                       WHERE f.id = ? AND f.status = 'approved'");
+$stmt = $conn->prepare("SELECT f.*, COALESCE(s.store_name, 'No Store Name Set') AS store_name
+                        FROM form f 
+                        LEFT JOIN store s ON f.id = s.store_id 
+                        WHERE f.id = ? AND f.status = 'approved'");
 $stmt->bind_param("i", $_SESSION['seller_id']);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -31,7 +35,19 @@ $seller = $result->fetch_assoc();
 $books_query = $conn->prepare("SELECT COUNT(*) as total FROM book WHERE seller_id = ?");
 $books_query->bind_param("i", $_SESSION['seller_id']);
 $books_query->execute();
-$total_books = $books_query->get_result()->fetch_assoc()['total'];
+$books_result = $books_query->get_result();
+$total_books = ($books_result->num_rows > 0) ? $books_result->fetch_assoc()['total'] : 0;
+
+// Fetch orders related to the seller
+$query = "SELECT o.order_id, o.buyer_id, o.status, oi.quantity, oi.price, b.title
+          FROM orders o
+          JOIN order_items oi ON o.order_id = oi.order_id
+          JOIN book b ON oi.b_id = b.book_id
+          WHERE b.seller_id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $_SESSION['seller_id']);
+$stmt->execute();
+$orders_result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -122,8 +138,8 @@ $total_books = $books_query->get_result()->fetch_assoc()['total'];
                 <a href="manage_books.php" class="nav-link">
                     <i class="fas fa-book"></i> Manage Books
                 </a>
-                <a href="add_book.php" class="nav-link">
-                    <i class="fas fa-plus"></i> Add New Book
+                <a href="manage_orders.php" class="nav-link">
+                    <i class="fas fa-shopping-cart"></i> Manage Orders
                 </a>
                 <a href="store_settings.php" class="nav-link">
                     <i class="fas fa-store"></i> Store Settings

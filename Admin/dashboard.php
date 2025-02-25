@@ -199,7 +199,7 @@ $recent_books = $conn->query("SELECT b.*, f.email as seller_email
                 <a href="reports.php" class="nav-link">
                     <i class="fas fa-chart-bar"></i> Reports
                 </a>
-                <a href="../logout.php" class="nav-link">
+                <a href="logout.php" class="nav-link">
                     <i class="fas fa-sign-out-alt"></i> Logout
                 </a>
             </nav>
