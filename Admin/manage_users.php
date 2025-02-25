@@ -174,7 +174,7 @@ $sellers = $conn->query($sellers_query);
         <div class="sidebar">
             <h2>Admin Dashboard</h2>
             <nav>
-                <a href="a_dashboard.php" class="nav-link">
+                <a href="dashboard.php" class="nav-link">
                     <i class="fas fa-home"></i> Dashboard
                 </a>
                 <a href="manage_users.php" class="nav-link active">
